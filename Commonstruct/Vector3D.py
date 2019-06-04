@@ -45,12 +45,6 @@ class Vector3D:
     def __mul__(self, other):
         if isinstance(other, int):
             return Vector3D(self._x * other, self._y * other, self._z * other)
-        elif isinstance(other, numpy.ndarray) and other.shape == (3, 3):
-            tempVector = numpy.array(self.toList())
-            print(tempVector)
-            print(other)
-            # 这里有点问题
-            return numpy.dot(tempVector, other)
         else:
             return None
 
@@ -59,6 +53,9 @@ class Vector3D:
 
     def toList(self):
         return [self._x, self._y, self._z]
+
+    def toArray(self):
+        return numpy.array(self.toList())
 
     @property
     def x(self):
@@ -95,7 +92,7 @@ class Vector3D:
         return math.sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z)
 
     @staticmethod
-    def toPoint(other):
+    def toVector3D(other):
         """
         输入list类型的实例，转化为Point3D类型的实例
 
@@ -113,5 +110,5 @@ class Vector3D:
 
 if __name__ == "__main__":
     v = Vector3D(1, 0, 0)
-    m = numpy.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
-    print(v * m)
+    m = numpy.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]])
+    print(m.dot(v.toArray()))
