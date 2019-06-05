@@ -107,8 +107,3 @@ class Vector3D:
     def __str__(self):
         return '[%.4f, %.4f, %.4f]' % (self._x, self._y, self._z)
 
-
-if __name__ == "__main__":
-    v = Vector3D(1, 0, 0)
-    m = numpy.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]])
-    print(m.dot(v.toArray()))

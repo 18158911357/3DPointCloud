@@ -1,4 +1,5 @@
 from Commonstruct import Point3D
+import numpy
 
 
 class Line3D:
@@ -21,3 +22,21 @@ class Line3D:
     @direction.setter
     def direction(self, direction):
         self._direction = direction
+
+    def lineRotate(self, other):
+        """
+        用于计算直线的旋转，直线包含起始点与方向向量，旋转矩阵同时作用于点与向量，输出一个新的直线
+
+        :param other:
+        :return:
+        """
+        if isinstance(other, (numpy.ndarray, numpy.mat)):
+            oriArray = numpy.array(self.origin.toList())
+            dirArray = numpy.array(self.direction.toList())
+            oriArray = numpy.dot(other, oriArray).tolist()
+            dirArray = numpy.dot(other, dirArray).tolist()
+            self.origin = Point3D(oriArray)
+            self.direction = Point3D(dirArray)
+            return Line3D(Point3D.toPoint3D(oriArray), Point3D.toPoint3D(dirArray))
+        else:
+            return None

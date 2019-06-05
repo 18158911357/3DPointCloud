@@ -1,6 +1,7 @@
 """
 三维空间点
 """
+import numpy
 import math
 from Commonstruct import Point2D
 
@@ -89,7 +90,7 @@ class Point3D:
         return math.sqrt(pt.x * pt.x + pt.y * pt.y + pt.z * pt.z)
 
     @staticmethod
-    def toPoint(other):
+    def toPoint3D(other):
         """
         输入list类型的实例，转化为Point3D类型的实例
 
