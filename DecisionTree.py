@@ -12,7 +12,7 @@ CART基于基尼指数作为属性选择的度量。
      树学习算法是采用启发式方法，近似求解这一最优化问题，这样得到的决策树是次优的。也就是说现实中的决策树学习算法，一般是逐步
      构建决策树，每次选取的特征是保证最优划分的，但是这样的得到的决策树不一定是所有可能的决策树中最优的。
 
-学习过程：决策树学习算法通常就是递归的选择最优特征，兵器人根据该特征对训练集进行划分，在划分之后的训练集上再进行决策树学习算法，
+学习过程：决策树学习算法通常就是递归的选择最优特征，并且人根据该特征对训练集进行划分，在划分之后的训练集上再进行决策树学习算法，
      如果能够大致分类，则设置成叶节点，否则继续选择最优特征，知道所有的训练数据子集都能被正确的分类或者没有可选的特征为止。
 
 剪枝：这样的算法生成的决策树，一般对训练集的分类效果很好、但泛化能力不强，也就是说容易产生过拟合现象。因此需要对构建好的数据集
@@ -20,8 +20,6 @@ CART基于基尼指数作为属性选择的度量。
 
 决策树的学习算法一般包含三个过程：特征选择、决策树生成和决策树剪枝。
 """
-
-__author__ = 'Zeros'
 
 
 class DecisonTree:
@@ -68,13 +66,13 @@ class DecisonTree:
         return tempCount
 
     # 计算信息增益
-    def caculateGain(self, dataset, feature):
-        values = self._featureValus[feature]  # 特征feature 所有可能的取值
+    def caculateGain(self, xdataset, xfeature):
+        values = self._featureValus[xfeature]  # 特征feature 所有可能的取值
         result = 0
         for v in values:
-            subDataset = self.splitDataset(xdataset=dataset, xfeature=feature, xvalue=v)
-            result += len(subDataset) / float(len(dataset)) * self.caculateEntropy(subDataset)
-        return self.caculateEntropy(dataset=dataset) - result
+            subDataset = self.splitDataset(xdataset=xdataset, xfeature=xfeature, xvalue=v)
+            result += len(subDataset) / float(len(xdataset)) * self.caculateEntropy(subDataset)
+        return self.caculateEntropy(dataset=xdataset) - result
 
     def splitDataset(self, xdataset, xfeature, xvalue):
         reslut = []
@@ -83,49 +81,41 @@ class DecisonTree:
                 reslut.append(index)
         return reslut
 
-    def createTree(self, dataset, features):
-
-        labelCount = self.labelCount(dataset)
+    def createTree(self, xdataset, xfeatures):
+        templabelCount = self.labelCount(xdataset)
         # 如果特征集为空，则该树为单节点树
         # 计算数据集中出现次数最多的标签
-        if not features:
-            return max(list(labelCount.items()), key=lambda x: x[1])[0]
-
+        if not xfeatures:
+            return max(list(templabelCount.items()), key=lambda x: x[1])[0]
         # 如果数据集中，只包同一种标签，则该树为单节点树
-        if len(labelCount) == 1:
-            return labelCount.keys()[0]
-
+        if len(templabelCount) == 1:
+            return templabelCount[0]
         # 计算特征集中每个特征的信息增益
-        l = map(lambda x: [x, self.caculateGain(dataset=dataset, feature=x)], features)
-
+        templ = map(lambda x: [x, self.caculateGain(xdataset=xdataset, xfeature=x)], xfeatures)
         # 选取信息增益最大的特征
-        feature, gain = max(l, key=lambda x: x[1])
-
+        feature, gain = max(templ, key=lambda x: x[1])
         # 如果最大信息增益小于阈值，则该树为单节点树
         if self.threshold > gain:
-            return max(list(labelCount.items()), key=lambda x: x[1])[0]
-
+            return max(list(templabelCount.items()), key=lambda x: x[1])[0]
         tempTree = {}
         # 选取特征子集
-        subFeatures = filter(lambda x: x != feature, features)
-        tree['feature'] = feature
+        subFeatures = filter(lambda x: x != feature, xfeatures)
+        tempTree['feature'] = feature
         # 构建子树
-        for value in self.featureValus[feature]:
-            subDataset = self.splitDataset(dataset=dataset, feature=feature, value=value)
-
+        for value in self._featureValus[feature]:
+            subDataset = self.splitDataset(xdataset=xdataset, xfeature=feature, xvalue=value)
             # 保证子数据集非空
             if not subDataset:
                 continue
-            tree[value] = self.createTree(dataset=subDataset, features=subFeatures)
+            tempTree[value] = self.createTree(xdataset=subDataset, xfeatures=subFeatures)
         return tree
 
     def classify(self, data):
-        def f(tree, data):
-            if type(tree) != dict:
+        def f(xtree, xdata):
+            if type(xtree) != dict:
                 return tree
             else:
-                return f(tree[data[tree['feature']]], data)
-
+                return f(xtree[xdata[xtree['feature']]], data)
         return f(self.tree, data)
 
 
@@ -150,5 +140,5 @@ if __name__ == '__main__':
         [2, 0, 0, 0],
     ]
     trainLabel1 = [0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0]
-    tree = DecisonTree(trainData=trainData1, trainLabel=trainLabel1, threshold=0)
+    tree = DecisonTree(xtrainData=trainData1, xtrainLabel=trainLabel1, xthreshold=0)
     print(tree.tree)
