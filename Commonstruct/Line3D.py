@@ -40,3 +40,7 @@ class Line3D:
             return Line3D(Point3D.toPoint3D(oriArray), Point3D.toPoint3D(dirArray))
         else:
             return None
+
+    def __str__(self):
+        return '[%.4f, %.4f, %.4f],[%.4f, %.4f, %.4f]' % (self.origin.x, self.origin.y, self.origin.z,
+                                                          self.direction.x, self.direction.y, self.direction.z)

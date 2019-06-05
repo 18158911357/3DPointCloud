@@ -4,6 +4,7 @@ Focal 1200 型号参数
 from numpy import *
 from Commonstruct import Line3D
 from Commonstruct import Point3D
+import Algorithm
 
 
 class Focal_1200:
@@ -34,28 +35,47 @@ class Focal_1200:
         self.stand_off_distance = 16.16
         self.z_range = 2.8
         self.max_slope = 20
-        self.location = Point3D()  # 传感器的安装位置
-        self.mounting_method = array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])  # 传感器的安装方式(传感器坐标系与世界坐标系一致)
-        self.Fix_Posture = Point3D()  # 传感器的安装姿态
+        #####################################################
+        self.location = Point3D()  # 传感器的安装位置(平移向量)
+        # 约定：传感器的默认激光为在x方向上的分布
+        # 传感器的默认安装方式(传感器坐标系与世界坐标系一致)
+        self.Mounting_method = array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        self.Fix_Posture = Point3D()  # 传感器的安装姿态(旋转向量)
+        # region 激光初始化
+        self.LaserLine = [Line3D(i * self.pixel_size_x, 0, 0) for i in range(self.pixel_num_x)]
+        for i in range(len(self.LaserLine)):
+            self.LaserLine[i].direction = Point3D(0, 0, -1)
+            print(i, self.LaserLine[i])
+        # endregion
 
-    def Fix(self, Fix_Location, mounting_method, Fix_Posture):
-        self.location = Fix_Location
-        self.mounting_method = mounting_method
-        self.Fix_Posture = Fix_Posture
-
-    def Trigger(self):
+    def Fix(self, Fix_Location, Mounting_method, Fix_Posture):
         """
-        触发函数,需要考虑的地方有安装的位置，安装的方式，安装的姿态
+        传感器的安装函数，由于传感器的安装姿态和安装方式，因此需要更新激光的起始点与方向
 
+        :param Fix_Location:
+        :param Mounting_method:
+        :param Fix_Posture:
         :return:
         """
-        # 传感器的初始激光
-        List_Laser = []
-        for i in range(self.pixel_num_x):
-            origin = Point3D(i * self.pixel_num_x)
-            direction = Point3D(0, 0, -1)
-            Laser = Line3D(origin, direction)
-            List_Laser.append(Laser)
-        # 加入安装方式与安装位置
-        for laser in List_Laser:
-            pass
+        self.location = Fix_Location
+        self.Mounting_method = Mounting_method
+        self.Fix_Posture = Fix_Posture
+        Matrix_Posture = Algorithm.Rodrigues(self.Fix_Posture)
+        # 更新激光的起始点与方向
+        for line in self.LaserLine:
+            line = line.lineRotate(self.Mounting_method)
+            line = line.lineRotate(Matrix_Posture)
+            line.origin += self.location
+
+
+if __name__ == '__main__':
+    focal = Focal_1200()
+    print(len(focal.LaserLine))
+    for iii4 in focal.LaserLine:
+        print(iii4)
+    li = Point3D(1, 1, 1)
+    mi = Algorithm.RotateMatrix('z', pi / 2)
+    pii = Point3D(0, 0, 0)
+    focal.Fix(li, mi, pii)
+    for iii in focal.LaserLine:
+        print(iii)
