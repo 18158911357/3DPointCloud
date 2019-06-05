@@ -5,3 +5,4 @@ from Commonstruct.Box3D import Box3D
 from Commonstruct.Triangle import Triangle
 from Commonstruct.TriangleSlice import TriangleSlice
 from Commonstruct.STLModel import STLModel
+from Commonstruct.Vector3D import Vector3D

@@ -23,7 +23,7 @@ class Point3D:
     def __add__(self, other):
         if isinstance(other, Point3D):
             return Point3D(self._x + other.x, self._y + other.y, self._z + other.z)
-        elif isinstance(other, int):
+        elif isinstance(other, (int, float)):
             return Point3D(self._x + other, self._y + other, self._z + other)
         else:
             return None
@@ -31,19 +31,19 @@ class Point3D:
     def __sub__(self, other):
         if isinstance(other, Point3D):
             return Point3D(self._x - other.x, self._y - other.y, self._z - other.z)
-        elif isinstance(other, int):
+        elif isinstance(other, (int, float)):
             return Point3D(self._x - other, self._y - other, self._z - other)
         else:
             return None
 
     def __truediv__(self, other):
-        if isinstance(other, int) and other != 0:
+        if isinstance(other, (int, float)) and other != 0:
             return Point3D(self._x / other, self._y / other, self._z / other)
         else:
             return None
 
     def __mul__(self, other):
-        if isinstance(other, int):
+        if isinstance(other, (int, float)):
             return Point3D(self._x * other, self._y * other, self._z * other)
         else:
             return None
