@@ -22,123 +22,106 @@ CART基于基尼指数作为属性选择的度量。
 """
 
 
-class DecisonTree:
-    def __init__(self, xtrainData, xtrainLabel, xthreshold):
-        self._trainData = []
-        self._trainLabel = []
-        self._featureValus = {}
-        self.loadData(xtrainData, xtrainLabel)
-        self.threshold = xthreshold
-        self.tree = self.createTree(range(0, len(xtrainLabel)), range(0, len(xtrainData[0])))
+def InfoEntropy(xDataSet):
+    """
+    根据训练数据集计算香农信息熵，每个训练数据集的最后一个数据为标签信息
 
-    # 加载数据
-    def loadData(self, xtrainData, xtrainLabel):
-        if len(xtrainData) != len(xtrainLabel):
-            raise ValueError('input error')
-        self._trainData = xtrainData
-        self._trainLabel = xtrainLabel
-        # 计算 featureValus
-        for data in xtrainData:
-            for index, value in enumerate(data):
-                if index not in self._featureValus.keys():
-                    self._featureValus[index] = [value]
-                if value not in self._featureValus[index]:
-                    self._featureValus[index].append(value)
+    :param xDataSet:训练数据集
+    :return:
+    """
+    # 对每个标签进行统计
+    labelSet = {}
+    for xdata in xDataSet:
+        currLabel = xdata[-1]
+        if currLabel not in labelSet.keys():
+            labelSet[currLabel] = 0
+        labelSet[currLabel] += 1
+    # 公式计算
+    infoEntropy = 0.0
+    numData = len(xDataSet)
+    for key in labelSet:
+        prob = float(labelSet[key]) / numData
+        infoEntropy -= prob * log(prob, 2)
+    return infoEntropy
 
-    # 计算信息熵
-    def caculateEntropy(self, dataset):
-        labelCount = self.labelCount(dataset)
-        size = len(dataset)
-        result = 0
-        for i in labelCount.values():
-            pi = i / float(size)
-            result -= pi * (log(pi) / log(2))
-        return result
 
-    # 计算数据集中，每个标签出现的次数
-    def labelCount(self, xdataset):
-        tempCount = {}
-        for i in xdataset:
-            if self._trainLabel[i] in tempCount.keys():
-                tempCount[self._trainLabel[i]] += 1
-            else:
-                tempCount[self._trainLabel[i]] = 1
-        return tempCount
+# 选择分裂属性
+def f(xDataSet):
+    # 特征数量，去掉最后一列的类标号
+    numFeatures = len(xDataSet[0]) - 1
+    baseInfo = InfoEntropy(xDataSet)
+    bestInfoGain = 0.0
+    bestFeature = -1
+    for i in range(numFeatures):
+        # 获取dataSet的第i个所有特征
+        featList = [x[i] for x in xDataSet]
+        # 创建set集合{}，元素不可重复
+        uniqueVals = set(featList)
+        # 经验条件熵
+        newEntropy = 0.0
+        # 计算信息增益
+        for value in uniqueVals:
+            tempDataSet = subDataSet(xDataSet, i, value)
+            prob = len(tempDataSet) / float(len(xDataSet))
+            newEntropy += prob * InfoEntropy(tempDataSet)
+        # 信息增益
+        infoGain = baseInfo - newEntropy
+        # 打印每个特征的信息增益
+        print("第%d个特征的增益为%.3f" % (i, infoGain))
+        # 计算信息增益
+        if infoGain > bestInfoGain:
+            # 更新信息增益，找到最大的信息增益
+            bestInfoGain = infoGain
+            # 记录信息增益最大的特征的索引值
+            bestFeature = i
+            # 返回信息增益最大特征的索引值
+    return bestFeature
 
-    # 计算信息增益
-    def caculateGain(self, xdataset, xfeature):
-        values = self._featureValus[xfeature]  # 特征feature 所有可能的取值
-        result = 0
-        for v in values:
-            subDataset = self.splitDataset(xdataset=xdataset, xfeature=xfeature, xvalue=v)
-            result += len(subDataset) / float(len(xdataset)) * self.caculateEntropy(subDataset)
-        return self.caculateEntropy(dataset=xdataset) - result
 
-    def splitDataset(self, xdataset, xfeature, xvalue):
-        reslut = []
-        for index in xdataset:
-            if self._trainData[index][xfeature] == xvalue:
-                reslut.append(index)
-        return reslut
+def subDataSet(xDataSet, axis, xValue):
+    """
+    计算数据子集，按照属性值的取值进行计算
 
-    def createTree(self, xdataset, xfeatures):
-        templabelCount = self.labelCount(xdataset)
-        # 如果特征集为空，则该树为单节点树
-        # 计算数据集中出现次数最多的标签
-        if not xfeatures:
-            return max(list(templabelCount.items()), key=lambda x: x[1])[0]
-        # 如果数据集中，只包同一种标签，则该树为单节点树
-        if len(templabelCount) == 1:
-            return templabelCount[0]
-        # 计算特征集中每个特征的信息增益
-        templ = map(lambda x: [x, self.caculateGain(xdataset=xdataset, xfeature=x)], xfeatures)
-        # 选取信息增益最大的特征
-        feature, gain = max(templ, key=lambda x: x[1])
-        # 如果最大信息增益小于阈值，则该树为单节点树
-        if self.threshold > gain:
-            return max(list(templabelCount.items()), key=lambda x: x[1])[0]
-        tempTree = {}
-        # 选取特征子集
-        subFeatures = filter(lambda x: x != feature, xfeatures)
-        tempTree['feature'] = feature
-        # 构建子树
-        for value in self._featureValus[feature]:
-            subDataset = self.splitDataset(xdataset=xdataset, xfeature=feature, xvalue=value)
-            # 保证子数据集非空
-            if not subDataset:
-                continue
-            tempTree[value] = self.createTree(xdataset=subDataset, xfeatures=subFeatures)
-        return tree
+    :param xDataSet:
+    :param axis:
+    :param xValue:
+    :return:
+    """
+    resultDataSet = []
+    for xData in xDataSet:
+        if xData[axis] == xValue:
+            resultDataSet.append(xData)
+    return resultDataSet
 
-    def classify(self, data):
-        def f(xtree, xdata):
-            if type(xtree) != dict:
-                return tree
-            else:
-                return f(xtree[xdata[xtree['feature']]], data)
-        return f(self.tree, data)
+
+def createTestData():
+    # 分类属性
+    xTestTrainLabel = ['年龄', '有工作', '有自己的房子', '信贷情况']
+    # 数据集
+    xTestDateSet = [
+        [0, 0, 0, 0, 'no'],  # 01
+        [0, 0, 0, 1, 'no'],  # 02
+        [0, 1, 0, 1, 'yes'],  # 03
+        [0, 1, 1, 0, 'yes'],  # 04
+        [0, 0, 0, 0, 'no'],  # 05
+        [1, 0, 0, 0, 'no'],  # 06
+        [1, 0, 0, 1, 'no'],  # 07
+        [1, 1, 1, 1, 'yes'],  # 08
+        [1, 0, 1, 2, 'yes'],  # 09
+        [1, 0, 1, 2, 'yes'],  # 10
+        [2, 0, 1, 2, 'yes'],  # 11
+        [2, 0, 1, 1, 'yes'],  # 12
+        [2, 1, 0, 1, 'yes'],  # 13
+        [2, 1, 0, 2, 'yes'],  # 14
+        [2, 0, 0, 0, 'no'],  # 15
+    ]
+    return xTestDateSet, xTestTrainLabel
 
 
 if __name__ == '__main__':
-    from numpy import log
+    from math import log
 
-    trainData1 = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 1],
-        [0, 1, 0, 1],
-        [0, 1, 1, 0],
-        [0, 0, 0, 0],
-        [1, 0, 0, 0],
-        [1, 0, 0, 1],
-        [1, 1, 1, 1],
-        [1, 0, 1, 2],
-        [1, 0, 1, 2],
-        [2, 0, 1, 2],
-        [2, 0, 1, 1],
-        [2, 1, 0, 1],
-        [2, 1, 0, 2],
-        [2, 0, 0, 0],
-    ]
-    trainLabel1 = [0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0]
-    tree = DecisonTree(xtrainData=trainData1, xtrainLabel=trainLabel1, xthreshold=0)
-    print(tree.tree)
+    testData, testLabel = createTestData()
+    bestIndex = f(testData)
+
+    print("最优索引值：" + testLabel[bestIndex])
