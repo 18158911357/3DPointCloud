@@ -187,3 +187,4 @@ if __name__ == '__main__':
     featLabels = []
     myTree = createTree(dataSet, labels, featLabels)
     print(myTree)
+    print(featLabels)
