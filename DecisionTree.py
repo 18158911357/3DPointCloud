@@ -139,7 +139,7 @@ def createTree(xDataSet, xLabels, xFeatLabels):
     # 选择最优特征
     bestIndex = bestSplitFeature(xDataSet)
     bestFeatLabel = xLabels[bestIndex]
-    featLabels.append(bestFeatLabel)
+    xFeatLabels.append(bestFeatLabel)
     # 根据最优特征的标签生成树
     DectionTree = {bestFeatLabel: {}}
     # 删除已经使用的特征标签
