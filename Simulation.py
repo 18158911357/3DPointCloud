@@ -7,9 +7,7 @@ from SensorStruct import Focal_1200
 
 
 def main():
-    STL_Path = r"E:\项目\项目文件\3D玻璃50066\伯恩\模型\伯恩#P30.stl"
-    stl_1 = STLModel.ReadSTL(STL_Path)  # 产品型号
-    sensor = Focal_1200()  # 传感器型号
+    print('Hello World!')
 
 
 if __name__ == "__main__":
