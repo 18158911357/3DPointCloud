@@ -1,4 +1,5 @@
 from numpy import *
+
 from Commonstruct import *
 
 
@@ -74,8 +75,99 @@ def RotateMatrix(_axis, _theta):
         return None
 
 
+def GetLineEndPoints(xPointIn, xResultLine):
+    """
+    以集中的点、计算得到的2D线段，计算端点
+
+    :param xPointIn:
+    :param xResultLine:
+    :return:
+    """
+    EndPoints = []
+    if not xPointIn:
+        return EndPoints
+    nPtNum = len(xPointIn)
+    if nPtNum < 2:
+        return EndPoints
+    # 获取XY坐标的最大值最小值
+    tempPointIn = list(zip(*xPointIn))
+    dXMax = max(tempPointIn[1])
+    dXMin = min(tempPointIn[1])
+    dYMax = max(tempPointIn[2])
+    dYMin = min(tempPointIn[2])
+    # 计算线段的两个端点
+    # 这边进行判断考虑了直线的斜率趋近于0和趋近于无穷大的情况
+    if abs(dXMax - dXMin) > abs(dYMax - dYMin):
+        startX = dXMin
+        endX = dXMax
+        startY = -(xResultLine.a * startX + xResultLine.c) / xResultLine.b
+        endY = -(xResultLine.a * endX + xResultLine.c) / xResultLine.b
+    else:
+        startY = dYMin
+        endY = dYMax
+        startX = -(xResultLine.b * startY + xResultLine.c) / xResultLine.a
+        endX = -(xResultLine.b * endY + xResultLine.c) / xResultLine.a
+    EndPoints = [[startX, startY], [endX, endY]]
+    return EndPoints
+
+
+def CalLine_Parall_Line(xPointsIn, xLineRef, xExcludeNum, xAverageNum, xDistMethod='Avg'):
+    """
+    根据参考线计算平行线
+
+    :param xPointsIn: 点云
+    :param xLineRef: 参考线
+    :param xDistMethod: 计算平移量的方式
+    :param xExcludeNum: 滤除点数
+    :param xAverageNum: 平均点数
+    :return:
+    """
+    nPtNum = len(xPointsIn)
+    if nPtNum == 0:
+        return None
+    pointRef = xPointsIn[nPtNum / 2]
+    # 计算所有点到参考直线的距离
+    tempDist = Geom_Dist_Point_Line(pointRef, xLineRef)
+    nSign = tempDist // abs(tempDist)
+    nDist = []
+    for x, i in enumerate(xPointsIn):
+        assert isinstance(x, list)
+        xPoint = Point3D(*x)
+        nDist[i] = Geom_Dist_Point_Line(xPoint, xLineRef) * nSign
+    if xDistMethod == 'Avg':
+        nLineShift = average(nDist)
+    else:
+        if xDistMethod == 'Max':
+            sort(nDist, reverse=True)
+        else:
+            sort(nDist)
+        if xAverageNum == 0:
+            xExcludeNum = 0
+            xAverageNum = 1
+        elif xExcludeNum + xAverageNum > nPtNum:
+            xExcludeNum = 0
+            xAverageNum = 1
+        nLineShift = average(nDist[xExcludeNum:xExcludeNum + xAverageNum])
+    a = xLineRef.a
+    b = xLineRef.b
+    c = xLineRef.c - nLineShift * nSign
+    lineOut = Line2D(a, b, c)
+    return lineOut
+
+
+def Geom_Dist_Point_Line(xPoint, xLine):
+    # Ax+By+C
+    return xLine.a * xPoint.x + xLine.b * xPoint.y + xLine.c
+
+
+def FitLineRobust():
+    """
+    鲁棒直线拟合
+
+    :return:
+    """
+    pass
+
+
 if __name__ == '__main__':
-    x = Vector3D(0, 0, 1)
-    print(Rodrigues(x))
-    print('\n')
-    print(RotateMatrix('z', 1))
+    pass

@@ -110,4 +110,5 @@ class Point3D:
 
 
 if __name__ == "__main__":
-    pass
+    x = (1, 2, 3)
+    print(Point3D(*x))
