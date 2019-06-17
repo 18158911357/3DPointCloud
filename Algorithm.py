@@ -91,10 +91,10 @@ def GetLineEndPoints(xPointIn, xResultLine):
         return EndPoints
     # 获取XY坐标的最大值最小值
     tempPointIn = list(zip(*xPointIn))
-    dXMax = max(tempPointIn[1])
-    dXMin = min(tempPointIn[1])
-    dYMax = max(tempPointIn[2])
-    dYMin = min(tempPointIn[2])
+    dXMax = max(tempPointIn[0])
+    dXMin = min(tempPointIn[0])
+    dYMax = max(tempPointIn[1])
+    dYMin = min(tempPointIn[1])
     # 计算线段的两个端点
     # 这边进行判断考虑了直线的斜率趋近于0和趋近于无穷大的情况
     if abs(dXMax - dXMin) > abs(dYMax - dYMin):
@@ -160,14 +160,54 @@ def Geom_Dist_Point_Line(xPoint, xLine):
     return xLine.a * xPoint.x + xLine.b * xPoint.y + xLine.c
 
 
-def FitLineRobust():
+def Find2DBox(xPointsIn):
     """
-    鲁棒直线拟合
+    计算可以包含xPointIn的最小矩阵(2D)
 
+    :param xPointsIn:
     :return:
     """
+    tempPoints = list(zip(*xPointsIn))
+    dXMax = max(tempPoints[0])
+    dXMin = min(tempPoints[0])
+    dYMax = max(tempPoints[1])
+    dYMin = min(tempPoints[1])
+    maxPoint = Point2D(dXMax, dYMax)
+    minPoint = Point2D(dXMin, dYMin)
+    min2DBox = Box2D(minPoint, maxPoint)
+    return min2DBox
+
+
+def Find3DBox(xPointsIn):
+    """
+    计算可以包含xPointIn的最小长方体(3D)
+
+    :param xPointsIn:
+    :return:
+    """
+    tempPoints = list(zip(*xPointsIn))
+    dXMax = max(tempPoints[0])
+    dXMin = min(tempPoints[0])
+    dYMax = max(tempPoints[1])
+    dYMin = min(tempPoints[1])
+    dZMax = max(tempPoints[2])
+    dZMin = min(tempPoints[2])
+    maxPoint = Point3D(dXMax, dYMax, dZMax)
+    minPoint = Point3D(dXMin, dYMin, dZMin)
+    min3DBox = Box3D(minPoint, maxPoint)
+    return min3DBox
+
+
+def IntersectionLine(xPlane1, xPlane2):
     pass
 
 
 if __name__ == '__main__':
-    pass
+    strPath = r'D:\边缘点.txt'
+    tttpointIn = []
+    with open(strPath) as f:
+        for tempLine in f:
+            tempPoint = list(map(float, tempLine.split(',')[0:3]))
+            tttpointIn.append(tempPoint)
+    iii = Find3DBox(tttpointIn)
+    print(iii)

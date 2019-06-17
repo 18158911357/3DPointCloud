@@ -14,22 +14,22 @@ class Box3D:
         :param minPoint:
         """
         if isinstance(maxPoint, Point3D) and isinstance(minPoint, Point3D):
-            self._max = maxPoint
-            self._min = minPoint
+            self._maxPoint = maxPoint
+            self._minPoint = minPoint
         else:
-            self._max = None
-            self._min = None
+            self._maxPoint = None
+            self._minPoint = None
 
-    def translate(self, pt):
+    def translate(self, vector):
         """
         平移操作
 
-        :param pt: 平移向量
+        :param vector: 平移向量
         :return:
         """
-        if isinstance(pt, Point3D):
-            self._max += pt
-            self._min += pt
+        if isinstance(vector, Point3D):
+            self._maxPoint += vector
+            self._minPoint += vector
 
     def isNULL(self):
         """
@@ -37,7 +37,7 @@ class Box3D:
 
         :return:
         """
-        return self._min is None and self._max is None
+        return self._minPoint is None and self._maxPoint is None
 
     def isEmpty(self):
         """
@@ -45,7 +45,7 @@ class Box3D:
 
         :return:
         """
-        return self._max == self._min
+        return self._maxPoint == self._minPoint
 
     def centerPoint(self):
         """
@@ -53,32 +53,44 @@ class Box3D:
 
         :return:
         """
-        return (self._max + self._min) / 2
+        return (self._maxPoint + self._minPoint) / 2
 
     def volumn(self):
-        return (self._max.x - self._min.x) * (self._max.y - self._min.y) * (self._max.z - self._min.z)
+        # 体积
+        return self.dimX() * self.dimY() * self.dimY()
 
     def dimX(self):
-        return self._max.x - self._min.x
+        # 长
+        return abs(self._maxPoint.x - self._minPoint.x)
 
     def dimY(self):
-        return self._max.y - self._min.y
+        # 宽
+        return abs(self._maxPoint.y - self._minPoint.y)
 
     def dimZ(self):
-        return self._max.z - self._min.z
+        # 高
+        return abs(self._maxPoint.z - self._minPoint.z)
 
     @property
-    def max(self):
-        return self._max
+    def maxPoint(self):
+        return self._maxPoint
 
     @property
-    def min(self):
-        return self._min
+    def minPoint(self):
+        return self._minPoint
 
-    @min.setter
-    def min(self, minPoint):
-        self._min = minPoint
+    @minPoint.setter
+    def minPoint(self, minPoint):
+        self._minPoint = minPoint
 
-    @max.setter
-    def max(self, maxPoint):
-        self._max = maxPoint
+    @maxPoint.setter
+    def maxPoint(self, maxPoint):
+        self._maxPoint = maxPoint
+
+    def __str__(self):
+        return 'minPoint:%s, maxPoint:%s' % (self._minPoint, self._maxPoint)
+
+
+if __name__ == '__main__':
+    tBox = Box3D()
+    print(tBox)

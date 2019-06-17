@@ -79,15 +79,13 @@ class Point3D:
     def z(self, z):
         self._z = z
 
-    @staticmethod
-    def norm(pt):
+    def norm(self):
         """
         计算点pt到原点的距离
 
-        :param pt: 输入的点
-        :return: 点到原点的距离
+        :return:
         """
-        return math.sqrt(pt.x * pt.x + pt.y * pt.y + pt.z * pt.z)
+        return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
 
     @staticmethod
     def toPoint3D(other):
@@ -106,7 +104,7 @@ class Point3D:
         return Point2D(self.x, self.y)
 
     def __str__(self):
-        return '[%.4f, %.4f, %.4f]' % (self._x, self._y, self._z)
+        return '(%.4f, %.4f, %.4f)' % (self._x, self._y, self._z)
 
 
 if __name__ == "__main__":
