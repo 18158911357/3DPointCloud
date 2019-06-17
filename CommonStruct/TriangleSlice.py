@@ -2,8 +2,8 @@
 三角面片结构
 """
 
-from Commonstruct import Point3D
-from Commonstruct import Triangle
+from CommonStruct import Point3D
+from CommonStruct import Triangle
 
 
 class TriangleSlice:

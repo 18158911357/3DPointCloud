@@ -4,6 +4,7 @@ import numpy
 
 class Line3D:
     def __init__(self, origin=Point3D(), direction=Point3D(1, 0, 0)):
+        assert isinstance(origin, Point3D) and isinstance(direction, Point3D)
         self.__origin = origin
         self.__direction = direction
 
@@ -35,9 +36,7 @@ class Line3D:
             dirArray = numpy.array(self.direction.toList())
             oriArray = numpy.dot(other, oriArray).tolist()
             dirArray = numpy.dot(other, dirArray).tolist()
-            self.origin = Point3D(oriArray)
-            self.direction = Point3D(dirArray)
-            return Line3D(Point3D.toPoint3D(oriArray), Point3D.toPoint3D(dirArray))
+            return Line3D(Point3D(*oriArray), Point3D(*dirArray))
         else:
             return None
 

@@ -13,8 +13,7 @@ class Box3D:
         :param xMaxPoint:
         :param xMinPoint:
         """
-        assert isinstance(xMaxPoint, Point3D)
-        assert isinstance(xMinPoint, Point3D)
+        assert isinstance(xMaxPoint, Point3D) and isinstance(xMinPoint, Point3D)
         self.__maxPoint = xMaxPoint
         self.__minPoint = xMinPoint
 
