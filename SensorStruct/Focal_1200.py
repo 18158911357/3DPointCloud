@@ -2,8 +2,8 @@
 Focal 1200 型号参数
 """
 from numpy import *
-from Commonstruct import Line3D
-from Commonstruct import Point3D
+from CommonStruct import Line3D
+from CommonStruct import Point3D
 import Algorithm
 
 

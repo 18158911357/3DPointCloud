@@ -1,9 +1,8 @@
 from numpy import *
+from CommonStruct import *
 
-from Commonstruct import *
 
-
-def Rodrigues(_x):
+def Rodrigues(xVector):
     """
     罗德里格斯变换
     -x = [nx,ny,nz],\n
@@ -13,7 +12,8 @@ def Rodrigues(_x):
 
     :return: 变换矩阵
     """
-    theta = Vector3D.norm(_x)
+    assert isinstance(xVector, Point3D)
+    theta = xVector.norm()
     s = math.sin(theta)
     c = math.cos(theta)
     c1 = 1.0 - c
@@ -21,8 +21,8 @@ def Rodrigues(_x):
         itheta = 0
     else:
         itheta = 1 / theta
-    _x = _x * itheta
-    ax = Vector3D.toArray(_x)
+    xVector = xVector * itheta
+    ax = Point3D.toArray(xVector)
 
     rrt = array([[ax[0] * ax[0], ax[0] * ax[1], ax[0] * ax[2]],
                  [ax[1] * ax[0], ax[1] * ax[1], ax[1] * ax[2]],
@@ -199,7 +199,10 @@ def Find3DBox(xPointsIn):
 
 
 def IntersectionLine(xPlane1, xPlane2):
-    pass
+    xVector1 = xPlane1.normVector()
+    xVector2 = xPlane2.normVector()
+    tempDelta = xVector2 - xVector1
+
 
 
 if __name__ == '__main__':

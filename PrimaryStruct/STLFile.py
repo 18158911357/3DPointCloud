@@ -2,7 +2,7 @@
 STL文件类
 """
 import struct
-from Commonstruct import Point3D, TriangleSlice
+from CommonStruct import Point3D, TriangleSlice
 
 
 def LoadBrinary(strPath):

@@ -1,27 +1,27 @@
-from Commonstruct import Point3D
+from CommonStruct import Point3D
 import numpy
 
 
 class Line3D:
     def __init__(self, origin=Point3D(), direction=Point3D(1, 0, 0)):
-        self._origin = origin
-        self._direction = direction
+        self.__origin = origin
+        self.__direction = direction
 
     @property
     def origin(self):
-        return self._origin
+        return self.__origin
 
     @property
     def direction(self):
-        return self._direction
+        return self.__direction
 
     @origin.setter
     def origin(self, origin):
-        self._origin = origin
+        self.__origin = origin
 
     @direction.setter
     def direction(self, direction):
-        self._direction = direction
+        self.__direction = direction
 
     def lineRotate(self, other):
         """
