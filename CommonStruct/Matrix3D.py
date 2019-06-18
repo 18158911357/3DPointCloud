@@ -37,10 +37,14 @@ class Matrix3D:
 
 
 if __name__ == '__main__':
-    testList = [[1.000000e+00, 0.000000e+00, 0.000000e+00],
-                [0.000000e+00, 6.123234e-17, -1.000000e+00],
-                [0.000000e+00, 1.000000e+00, 6.123234e-17]]
+    testList = [[1, 0, 0],
+                [0, 0, -1],
+                [0, 1, 0]]
     testMatrix = Matrix3D(testList)
+    testList = [[1, 1, 1],
+                [1, 1, 1],
+                [1, 1, 1]]
+    print(testMatrix)
     testPoint = Point3D(0, 0, 2)
     resultPoint = testMatrix * testPoint
     print(resultPoint)
