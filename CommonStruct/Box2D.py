@@ -10,8 +10,8 @@ class Box2D:
         :param xMinPoint:
         """
         assert isinstance(xMaxPoint, Point2D) and isinstance(xMinPoint, Point2D)
-        self.__minPoint = xMinPoint
-        self.__maxPoint = xMaxPoint
+        self.__minPoint = deepcopy(xMinPoint)
+        self.__maxPoint = deepcopy(xMaxPoint)
 
     def translate(self, xVector):
         """
@@ -62,11 +62,11 @@ class Box2D:
 
     @minPoint.setter
     def minPoint(self, xMinPoint):
-        self.__minPoint = xMinPoint
+        self.__minPoint = deepcopy(xMinPoint)
 
     @maxPoint.setter
     def maxPoint(self, xMaxPoint):
-        self.__maxPoint = xMaxPoint
+        self.__maxPoint = deepcopy(xMaxPoint)
 
     def __str__(self):
         return 'minPoint:%s, maxPoint:%s' % (self.__minPoint, self.__minPoint)
