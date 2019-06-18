@@ -1,5 +1,5 @@
 import numpy
-from CommonStruct import *
+from CommonStruct import Line3D, Point3D
 
 
 class Matrix3D:

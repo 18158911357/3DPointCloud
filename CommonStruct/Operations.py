@@ -1,4 +1,4 @@
-from CommonStruct import *
+from CommonStruct import Point3D
 import math
 
 

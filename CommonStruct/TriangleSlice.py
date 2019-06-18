@@ -7,30 +7,36 @@ from CommonStruct import Triangle
 
 
 class TriangleSlice:
-    __slots__ = ('_facet', '_vertex')
-
-    def __init__(self, facet=Point3D(), vertex=Triangle()):
+    def __init__(self, xFacet=Point3D(), xVertex=Triangle(Point3D(), Point3D(), Point3D())):
         """
         三角面片初始化函数
 
-        :param facet: 法向量
-        :param vertex: 顶点(3个)
+        :param xFacet: 法向量
+        :param xVertex: 顶点(3个)
         """
-        self._facet = facet
-        self._vertex = vertex
+        self.__facet = xFacet
+        self.__vertex = xVertex
 
     @property
     def facet(self):
-        return self._facet
-
-    @facet.setter
-    def facet(self, facet):
-        self._facet = facet
+        return self.__facet
 
     @property
     def vertex(self):
-        return self._vertex
+        return self.__vertex
+
+    @facet.setter
+    def facet(self, xFacet):
+        self.__facet = xFacet
 
     @vertex.setter
-    def vertex(self, vertex):
-        self._vertex = vertex
+    def vertex(self, xVertex):
+        self.__vertex = xVertex
+
+    def __str__(self):
+        return 'facet: %s, vectex: %s' % (self.__facet, self.__vertex)
+
+
+if __name__ == '__main__':
+    testTriangle = TriangleSlice()
+    print(testTriangle)

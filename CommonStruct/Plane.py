@@ -1,5 +1,6 @@
-from CommonStruct.Point3D import Point3D
+from CommonStruct import Point3D
 from copy import deepcopy
+from CommonStruct import Operations
 
 
 class Plane:
@@ -37,7 +38,7 @@ class Plane:
         """
         vector1 = self.__point1 - self.__point0
         vector2 = self.__point2 - self.__point0
-        vector3 = Point3D.crossMultiply(vector1, vector2)
+        vector3 = Operations.crossMultiply(vector1, vector2)
         return vector3 / vector3.norm()  # 单位化
 
     def __str__(self):

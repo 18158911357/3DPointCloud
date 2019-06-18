@@ -5,8 +5,6 @@ from CommonStruct import Point2D
 
 
 class Point3D:
-    __slots__ = ('__x', '__y', '__z')
-
     def __init__(self, xx=0.0, xy=0.0, xz=0.0):
         """
         初始化点坐标

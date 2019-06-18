@@ -1,4 +1,5 @@
 from CommonStruct.Point2D import Point2D
+from copy import deepcopy
 
 
 class Box2D:

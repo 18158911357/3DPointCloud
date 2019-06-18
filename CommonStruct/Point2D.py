@@ -64,6 +64,9 @@ class Point2D:
         """
         return (self.__x * self.__x + self.__y * self.__y) ** 0.5
 
+    def tolist(self):
+        return [self.x, self.y]
+
     def __str__(self):
         return '[%.4f, %.4f]' % (self.__x, self.__y)
 

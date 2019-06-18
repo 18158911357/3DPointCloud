@@ -1,4 +1,5 @@
 from CommonStruct import Point3D
+from copy import deepcopy
 
 
 class Box3D:
