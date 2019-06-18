@@ -86,7 +86,7 @@ def PointRead(f):
 # endregion
 ###################
 
-
+###
 if __name__ == '__main__':
     testPath = r'E:\项目\项目文件\3D玻璃50066\伯恩\模型\伯恩#P30.stl'
     testSTL = LoadBrinary(testPath)
