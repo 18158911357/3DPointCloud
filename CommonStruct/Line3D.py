@@ -5,8 +5,8 @@ from copy import deepcopy
 class Line3D:
     def __init__(self, xOrigin=Point3D(), xDirection=Point3D(1, 1, 0)):
         assert isinstance(xOrigin, Point3D) and isinstance(xDirection, Point3D)
-        self.__origin = xOrigin
-        self.__direction = xDirection
+        self.__origin = deepcopy(xOrigin)
+        self.__direction = deepcopy(xDirection)
 
     @property
     def origin(self):
@@ -18,11 +18,11 @@ class Line3D:
 
     @origin.setter
     def origin(self, xOrigin):
-        self.__origin = xOrigin
+        self.__origin = deepcopy(xOrigin)
 
     @direction.setter
     def direction(self, xDirection):
-        self.__direction = xDirection
+        self.__direction = deepcopy(xDirection)
 
     def __str__(self):
         return 'origin:%s, direction:%s' % (self.origin, self.direction)
