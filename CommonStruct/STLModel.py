@@ -33,7 +33,11 @@ class STLModel:
         return STLModel(List_TriSlice)
 
     def __str__(self):
-        return '%s' % self.__listTri
+        # 需要增加换行的显示 ********************************
+        tempListTri = []
+        for x in self.__listTri:
+            tempListTri.append(str(x))
+        return '%s' % tempListTri
 
 
 ###################
@@ -67,6 +71,7 @@ def TriangleSliceRead(f):
     triSlice.vertex.vertex1 = PointRead(f)
     triSlice.vertex.vertex2 = PointRead(f)
     triSlice.vertex.vertex3 = PointRead(f)
+    return triSlice
 
 
 def PointRead(f):
@@ -86,8 +91,8 @@ def PointRead(f):
 # endregion
 ###################
 
-###
+
 if __name__ == '__main__':
-    testPath = r'E:\项目\项目文件\3D玻璃50066\伯恩\模型\伯恩#P30.stl'
-    testSTL = LoadBrinary(testPath)
+    testPath = r'E:\项目\项目文件\3D玻璃50066\伯恩\模型\伯恩#P30Pro上表面.stl'
+    testSTL = STLModel.ReadSTL(testPath)
     print(testSTL)

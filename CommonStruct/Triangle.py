@@ -6,7 +6,7 @@ from copy import deepcopy
 
 
 class Triangle:
-    def __init__(self, xVertex1, xVertex2, xVertex3):
+    def __init__(self, xVertex1=Point3D(), xVertex2=Point3D(), xVertex3=Point3D()):
         assert isinstance(xVertex1, Point3D) and isinstance(xVertex2, Point3D) and isinstance(xVertex3, Point3D)
         self.__vertex1 = deepcopy(xVertex1)
         self.__vertex2 = deepcopy(xVertex2)
@@ -45,6 +45,4 @@ if __name__ == '__main__':
     testPoint2 = Point3D(1, 0, 0)
     testPoint3 = Point3D(0, 1, 0)
     testTriangle = Triangle(testPoint1, testPoint2, testPoint3)
-    testPoint1.x = 2
-    print(testPoint1)
     print(testTriangle)

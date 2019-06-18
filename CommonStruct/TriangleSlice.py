@@ -2,20 +2,20 @@
 三角面片结构
 """
 
-from CommonStruct import Point3D
-from CommonStruct import Triangle
+from CommonStruct import Point3D, Triangle
+from copy import deepcopy
 
 
 class TriangleSlice:
-    def __init__(self, xFacet=Point3D(), xVertex=Triangle(Point3D(), Point3D(), Point3D())):
+    def __init__(self, xFacet=Point3D(), xVertex=Triangle()):
         """
         三角面片初始化函数
 
         :param xFacet: 法向量
         :param xVertex: 顶点(3个)
         """
-        self.__facet = xFacet
-        self.__vertex = xVertex
+        self.__facet = deepcopy(xFacet)
+        self.__vertex = deepcopy(xVertex)
 
     @property
     def facet(self):
@@ -27,11 +27,11 @@ class TriangleSlice:
 
     @facet.setter
     def facet(self, xFacet):
-        self.__facet = xFacet
+        self.__facet = deepcopy(xFacet)
 
     @vertex.setter
     def vertex(self, xVertex):
-        self.__vertex = xVertex
+        self.__vertex = deepcopy(xVertex)
 
     def __str__(self):
         return 'facet: %s, vectex: %s' % (self.__facet, self.__vertex)
