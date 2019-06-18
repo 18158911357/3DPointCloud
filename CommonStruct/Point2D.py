@@ -1,52 +1,44 @@
-"""
-二维点
-"""
-import math
-
-
 class Point2D:
-    __slots__ = ('__x', '__y')
-
     def __init__(self, xx=0.0, xy=0.0):
         """
         初始化点坐标
 
-        :param x: X坐标
-        :param y: Y坐标
+        :param xx: X坐标
+        :param xy: Y坐标
         """
         self.__x = xx
         self.__y = xy
 
-    def __add__(self, other):
-        if isinstance(other, Point2D):
-            return Point2D(self.__x + other.x, self.__y + other.y)
-        elif isinstance(other, int):
-            return Point2D(self.__x + other, self.__y + other)
+    def __add__(self, xOther):
+        if isinstance(xOther, Point2D):
+            return Point2D(self.__x + xOther.x, self.__y + xOther.y)
+        elif isinstance(xOther, (int, float)):
+            return Point2D(self.__x + xOther, self.__y + xOther)
         else:
             return None
 
-    def __sub__(self, other):
-        if isinstance(other, Point2D):
-            return Point2D(self.__x - other.x, self.__y - other.y)
-        elif isinstance(other, int):
-            return Point2D(self.__x - other, self.__y - other)
+    def __sub__(self, xOther):
+        if isinstance(xOther, Point2D):
+            return Point2D(self.__x - xOther.x, self.__y - xOther.y)
+        elif isinstance(xOther, (int, float)):
+            return Point2D(self.__x - xOther, self.__y - xOther)
         else:
             return None
 
-    def __truediv__(self, other):
-        if isinstance(other, int) and other != 0:
-            return Point2D(self.__x / other, self.__y / other)
+    def __truediv__(self, xOther):
+        if isinstance(xOther, (int, float)) and xOther != 0:
+            return Point2D(self.__x / xOther, self.__y / xOther)
         else:
             return None
 
-    def __mul__(self, other):
-        if isinstance(other, int):
-            return Point2D(self.__x * other, self.__y * other)
+    def __mul__(self, xOther):
+        if isinstance(xOther, (int, float)):
+            return Point2D(self.__x * xOther, self.__y * xOther)
         else:
             return None
 
-    def __eq__(self, other):
-        return isinstance(other, Point2D) and self.__x == other.x and self.__y == other.y
+    def __eq__(self, xOther):
+        return isinstance(xOther, Point2D) and self.__x == xOther.x and self.__y == xOther.y
 
     @property
     def x(self):
@@ -70,7 +62,12 @@ class Point2D:
 
         :return: 点到原点的距离
         """
-        return math.sqrt(self.__x * self.__x + self.__y * self.__y)
+        return (self.__x * self.__x + self.__y * self.__y) ** 0.5
 
     def __str__(self):
         return '[%.4f, %.4f]' % (self.__x, self.__y)
+
+
+if __name__ == '__main__':
+    testPoint = Point2D()
+    print(testPoint)

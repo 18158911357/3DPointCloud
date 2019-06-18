@@ -204,13 +204,6 @@ def IntersectionLine(xPlane1, xPlane2):
     tempDelta = xVector2 - xVector1
 
 
-
 if __name__ == '__main__':
-    strPath = r'D:\边缘点.txt'
-    tttpointIn = []
-    with open(strPath) as f:
-        for tempLine in f:
-            tempPoint = list(map(float, tempLine.split(',')[0:3]))
-            tttpointIn.append(tempPoint)
-    iii = Find3DBox(tttpointIn)
-    print(iii)
+    ttt = RotateMatrix('x', pi / 2)
+    print(ttt)
