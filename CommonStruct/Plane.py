@@ -1,13 +1,12 @@
-from CommonStruct import Point3D
 from copy import deepcopy
-from CommonStruct import Operations
+from CommonStruct import Point3D, Operations
 
 
 class Plane:
     def __init__(self, *args):
-        if len(args) == 2:  # 点法式构造
+        if len(args) == 2:  # 点法式构造  A(x-x0)+B(y-y0)+C(z-z0)=0
             xPoint, xVector = args
-            self.__point0 = xPoint
+            self.__point0 = deepcopy(xPoint)
             if xVector.z == 0:
                 self.__point1 = deepcopy(self.__point0)
                 self.__point1.z += 1
@@ -17,7 +16,7 @@ class Plane:
                 self.__point2.z = self.__point0.z + (self.__point1.x - self.__point0.x) * xVector.y - \
                                   (self.__point1.y - self.__point0.y) * xVector.x
             else:
-                temp = xVector.x * xPoint.x + xVector.y * xPoint.y + xVector.z * xPoint.z
+                temp = Operations.dotMultiply(xPoint, xVector)
                 self.__point1 = Point3D(xPoint.x, xPoint.y + 1, 0)
                 self.__point2 = Point3D(xPoint.x + 1, xPoint.y, 0)
                 self.__point1.z = (temp - xVector.x * self.__point1.x - xVector.y * self.__point1.y) / xVector.z
