@@ -3,6 +3,7 @@ STL模型的结构体
 """
 import struct
 from CommonStruct import Point3D, TriangleSlice
+from copy import deepcopy
 
 
 class STLModel:
@@ -11,7 +12,7 @@ class STLModel:
         STL模型初始化
         :param xListTri: 三角片lSist
         """
-        self.__listTri = xListTri  # type: list
+        self.__listTri = deepcopy(xListTri)  # type: list
 
     @property
     def listTri(self):
@@ -19,7 +20,7 @@ class STLModel:
 
     @listTri.setter
     def listTri(self, xListTri):
-        self.__listTri = xListTri
+        self.__listTri = deepcopy(xListTri)
 
     @staticmethod
     def ReadSTL(xPath):
@@ -32,12 +33,17 @@ class STLModel:
         List_TriSlice = LoadBrinary(xPath)
         return STLModel(List_TriSlice)
 
+    def __len__(self):
+        return len(self.__listTri)
+
+    def __getitem__(self, xItem):
+        return self.__listTri[xItem]
+
     def __str__(self):
-        # 需要增加换行的显示 ********************************
-        tempListTri = []
-        for x in self.__listTri:
-            tempListTri.append(str(x))
-        return '%s' % tempListTri
+        print('三角面片开始显示')
+        for i, x in enumerate(self.__listTri):
+            print(i, ':', x)
+        return '三角面片显示结束'
 
 
 ###################
@@ -71,6 +77,7 @@ def TriangleSliceRead(f):
     triSlice.vertex.vertex1 = PointRead(f)
     triSlice.vertex.vertex2 = PointRead(f)
     triSlice.vertex.vertex3 = PointRead(f)
+    f.read(2)
     return triSlice
 
 
@@ -86,8 +93,6 @@ def PointRead(f):
     point.y = struct.unpack('f', f.read(4))[0]
     point.z = struct.unpack('f', f.read(4))[0]
     return point
-
-
 # endregion
 ###################
 
@@ -95,4 +100,5 @@ def PointRead(f):
 if __name__ == '__main__':
     testPath = r'E:\项目\项目文件\3D玻璃50066\伯恩\模型\伯恩#P30Pro上表面.stl'
     testSTL = STLModel.ReadSTL(testPath)
+    print('三角面片数量:', len(testSTL))
     print(testSTL)

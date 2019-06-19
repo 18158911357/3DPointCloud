@@ -5,24 +5,23 @@ from CommonStruct import Line3D, Point3D
 class Matrix3D:
     def __init__(self, xList):
         assert isinstance(xList, list)
-        self.data = numpy.array(xList)
+        self.__Data = numpy.array(xList)
 
     def __len__(self):
-        return self.data.size
+        return self.__Data.size
 
     def shape(self):
-        return self.data.shape
+        return self.__Data.shape
 
     def __getitem__(self, xItem):
-        sample = self.data[xItem]
-        return sample
+        return self.__Data[xItem]
 
     def __mul__(self, xOther):
         if isinstance(xOther, Point3D):
             # 矩阵左乘向量，点
-            tempX = float(self.data[0][0] * xOther.x + self.data[0][1] * xOther.y + self.data[0][2] * xOther.z)
-            tempY = float(self.data[1][0] * xOther.x + self.data[1][1] * xOther.y + self.data[1][2] * xOther.z)
-            tempZ = float(self.data[2][0] * xOther.x + self.data[2][1] * xOther.y + self.data[2][2] * xOther.z)
+            tempX = float(self.__Data[0][0] * xOther.x + self.__Data[0][1] * xOther.y + self.__Data[0][2] * xOther.z)
+            tempY = float(self.__Data[1][0] * xOther.x + self.__Data[1][1] * xOther.y + self.__Data[1][2] * xOther.z)
+            tempZ = float(self.__Data[2][0] * xOther.x + self.__Data[2][1] * xOther.y + self.__Data[2][2] * xOther.z)
             return Point3D(tempX, tempY, tempZ)
         elif isinstance(xOther, Line3D):
             # 矩阵左乘3D直线
@@ -33,7 +32,7 @@ class Matrix3D:
             return None
 
     def __str__(self):
-        return str(self.data)
+        return str(self.__Data)
 
 
 if __name__ == '__main__':
