@@ -1,6 +1,3 @@
-from copy import deepcopy
-
-
 class Line2D:
     def __init__(self, xa=1, xb=1, xc=0):
         """

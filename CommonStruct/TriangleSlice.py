@@ -1,9 +1,6 @@
-"""
-三角面片结构
-"""
-
-from CommonStruct import Point3D, Triangle
 from copy import deepcopy
+from CommonStruct.Point3D import Point3D
+from CommonStruct.Triangle import Triangle
 
 
 class TriangleSlice:

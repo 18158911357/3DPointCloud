@@ -1,5 +1,5 @@
-from CommonStruct import Point3D
 import math
+from CommonStruct.Point3D import Point3D
 
 
 def crossMultiply(xPoint1, xPoint2):
@@ -25,3 +25,8 @@ def angleOfVector(xPoint1, xPoint2):
     # 求两个向量的夹角
     theta = dotMultiply(xPoint1, xPoint2) / (xPoint1.norm() * xPoint2.norm())
     return math.acos(theta)
+
+
+if __name__ == '__main__':
+    pass
+

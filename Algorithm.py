@@ -7,7 +7,7 @@ def average(xNumList):
     return sum(xNumList) / len(xNumList)
 
 
-def Rodrigues(xVector):
+def Rodrigues():
     """
     罗德里格斯变换
     -x = [nx,ny,nz],\n
@@ -17,25 +17,26 @@ def Rodrigues(xVector):
 
     :return: 变换矩阵
     """
-    assert isinstance(xVector, Point3D)
-    theta = xVector.norm()
-    s = math.sin(theta)
-    c = math.cos(theta)
-    c1 = 1.0 - c
-    if theta == 0:
-        itheta = 0
-    else:
-        itheta = 1 / theta
-    xVector = xVector * itheta
-    # ax = Point3D.toArray(xVector)
-
-    rrt = xVector * xVector
-    r_x = Matrix3D([[0, -xVector.z, xVector.y],
-                    [xVector.z, 0, -xVector.x],
-                    [-xVector.y, xVector.x, 0]])
-    ae = Matrix3D.eye()
-    r = c * ae + s * r_x + c1 * rrt
-    return r
+    # assert isinstance(xVector, Point3D)
+    # theta = xVector.norm()
+    # s = math.sin(theta)
+    # c = math.cos(theta)
+    # c1 = 1.0 - c
+    # if theta == 0:
+    #     itheta = 0
+    # else:
+    #     itheta = 1 / theta
+    # xVector = xVector * itheta
+    # # ax = Point3D.toArray(xVector)
+    #
+    # rrt = xVector * xVector
+    # r_x = Matrix3D([[0, -xVector.z, xVector.y],
+    #                 [xVector.z, 0, -xVector.x],
+    #                 [-xVector.y, xVector.x, 0]])
+    # ae = Matrix3D.eye()
+    # r = c * ae + s * r_x + c1 * rrt
+    # return r
+    pass
 
 
 def CoordinateMatrix(_axis, _theta):

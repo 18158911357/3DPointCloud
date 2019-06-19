@@ -1,9 +1,9 @@
-from CommonStruct import Point3D
 from copy import deepcopy
+from CommonStruct.Point3D import Point3D
 
 
 class Line3D:
-    def __init__(self, xOrigin=Point3D(0, 0, 0), xDirection=Point3D(1, 1, 0)):
+    def __init__(self, xOrigin=Point3D(), xDirection=Point3D(1, 1, 0)):
         assert isinstance(xOrigin, Point3D) and isinstance(xDirection, Point3D)
         self.__origin = deepcopy(xOrigin)
         self.__direction = deepcopy(xDirection)

@@ -1,11 +1,3 @@
-"""
-STL模型的结构体
-"""
-import struct
-from CommonStruct import Point3D, TriangleSlice
-from copy import deepcopy
-
-
 class STLModel:
     def __init__(self, xListTri):
         """
@@ -98,6 +90,9 @@ def PointRead(f):
 
 
 if __name__ == '__main__':
+    import struct
+    from CommonStruct import Point3D, TriangleSlice
+    from copy import deepcopy
     testPath = r'E:\项目\项目文件\3D玻璃50066\伯恩\模型\伯恩#P30Pro上表面.stl'
     testSTL = STLModel.ReadSTL(testPath)
     print('三角面片数量:', len(testSTL))

@@ -1,9 +1,3 @@
-"""
-三维空间点
-"""
-from CommonStruct import Point2D, Matrix3D
-
-
 class Point3D:
     def __init__(self, xx=0.0, xy=0.0, xz=0.0):
         """
@@ -93,6 +87,8 @@ class Point3D:
 
 
 if __name__ == "__main__":
+    from CommonStruct.Point2D import Point2D
+    from CommonStruct.Matrix3D import Matrix3D
     testPoint1 = Point3D(1, 1, 1)
     testPoint2 = Point3D(2, 2, 2)
     print(testPoint1 * testPoint2)

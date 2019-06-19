@@ -1,5 +1,4 @@
 import numpy
-from CommonStruct import Line3D, Point3D
 
 
 class Matrix3D:
@@ -28,11 +27,11 @@ class Matrix3D:
             tempOrigin = self * xOther.origin
             tempDirection = self * xOther.direction
             return Line3D(tempOrigin, tempDirection)
-        elif isinstance(xOther, Matrix3D):
-            # 矩阵相乘
-            return self.__data * xOther.__data
-        elif isinstance(xOther, (int, float)):
-            return self.__data * xOther
+        # elif isinstance(xOther, Matrix3D):
+        #     # 矩阵相乘
+        #     return self.__data * xOther.__data
+        # elif isinstance(xOther, (int, float)):
+        #     return self.__data * xOther
         else:
             return None
 
@@ -48,8 +47,5 @@ class Matrix3D:
 
 
 if __name__ == '__main__':
-    testList = [[1, 0, 0],
-                [0, 0, -1],
-                [0, 1, 0]]
-    testMatrix = Matrix3D(testList)
-    print(testMatrix.T())
+    from CommonStruct import Point3D
+    from CommonStruct import Line3D
