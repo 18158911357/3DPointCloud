@@ -8,3 +8,5 @@ from CommonStruct.Triangle import Triangle
 from CommonStruct.TriangleSlice import TriangleSlice
 from CommonStruct.STLModel import STLModel
 from CommonStruct.Plane import Plane
+from CommonStruct.Operations import *
+from CommonStruct.Matrix3D import Matrix3D

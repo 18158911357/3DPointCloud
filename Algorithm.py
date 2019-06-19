@@ -1,5 +1,10 @@
-from numpy import *
 from CommonStruct import *
+
+EPSILONS = 1e-5
+
+
+def average(xNumList):
+    return sum(xNumList) / len(xNumList)
 
 
 def Rodrigues(xVector):
@@ -24,12 +29,12 @@ def Rodrigues(xVector):
     xVector = xVector * itheta
     ax = Point3D.toArray(xVector)
 
-    rrt = array([[ax[0] * ax[0], ax[0] * ax[1], ax[0] * ax[2]],
-                 [ax[1] * ax[0], ax[1] * ax[1], ax[1] * ax[2]],
-                 [ax[2] * ax[0], ax[2] * ax[1], ax[2] * ax[2]]])
-    r_x = array([[0, -ax[2], ax[1]],
-                 [ax[2], 0, -ax[0]],
-                 [-ax[1], ax[0], 0]])
+    rrt = Matrix3D([[ax[0] * ax[0], ax[0] * ax[1], ax[0] * ax[2]],
+                    [ax[1] * ax[0], ax[1] * ax[1], ax[1] * ax[2]],
+                    [ax[2] * ax[0], ax[2] * ax[1], ax[2] * ax[2]]])
+    r_x = Matrix3D([[0, -ax[2], ax[1]],
+                    [ax[2], 0, -ax[0]],
+                    [-ax[1], ax[0], 0]])
     ae = eye(3)
     r = c * ae + c1 * rrt + s * r_x
     return r
@@ -43,14 +48,14 @@ def CoordinateMatrix(_axis, _theta):
     :param _theta: 旋转角度
     :return: 坐标系旋转矩阵
     """
-    cTheta = cos(_theta)
-    sTheta = sin(_theta)
+    cTheta = math.cos(_theta)
+    sTheta = math.sin(_theta)
     if _axis == 'x':
-        return array([[1, 0, 0], [0, cTheta, sTheta], [0, -sTheta, cTheta]])
+        return Matrix3D([[1, 0, 0], [0, cTheta, sTheta], [0, -sTheta, cTheta]])
     elif _axis == 'y':
-        return array([[cTheta, 0, -sTheta], [0, 1, 0], [sTheta, 0, cTheta]])
+        return Matrix3D([[cTheta, 0, -sTheta], [0, 1, 0], [sTheta, 0, cTheta]])
     elif _axis == 'z':
-        return array([[cTheta, sTheta, 0], [-sTheta, cTheta, 0], [0, 0, 1]])
+        return Matrix3D([[cTheta, sTheta, 0], [-sTheta, cTheta, 0], [0, 0, 1]])
     else:
         return None
 
@@ -63,14 +68,14 @@ def RotateMatrix(_axis, _theta):
     :param _theta: 旋转角度
     :return: 旋转矩阵
     """
-    cTheta = cos(_theta)
-    sTheta = sin(_theta)
+    cTheta = math.cos(_theta)
+    sTheta = math.sin(_theta)
     if _axis == 'x':
-        return array([[1, 0, 0], [0, cTheta, -sTheta], [0, sTheta, cTheta]])
+        return Matrix3D([[1, 0, 0], [0, cTheta, -sTheta], [0, sTheta, cTheta]])
     elif _axis == 'y':
-        return array([[cTheta, 0, sTheta], [0, 1, 0], [-sTheta, 0, cTheta]])
+        return Matrix3D([[cTheta, 0, sTheta], [0, 1, 0], [-sTheta, 0, cTheta]])
     elif _axis == 'z':
-        return array([[cTheta, -sTheta, 0], [sTheta, cTheta, 0], [0, 0, 1]])
+        return Matrix3D([[cTheta, -sTheta, 0], [sTheta, cTheta, 0], [0, 0, 1]])
     else:
         return None
 
@@ -138,9 +143,9 @@ def CalLine_Parall_Line(xPointsIn, xLineRef, xExcludeNum, xAverageNum, xDistMeth
         nLineShift = average(nDist)
     else:
         if xDistMethod == 'Max':
-            sort(nDist, reverse=True)
+            sorted(nDist, reverse=True)
         else:
-            sort(nDist)
+            sorted(nDist)
         if xAverageNum == 0:
             xExcludeNum = 0
             xAverageNum = 1
@@ -199,11 +204,67 @@ def Find3DBox(xPointsIn):
 
 
 def IntersectionLine(xPlane1, xPlane2):
+    """
+    求取两个平面的交线
+
+    :param xPlane1:
+    :param xPlane2:
+    :return:
+    """
+    assert isinstance(xPlane1, Plane) and isinstance(xPlane2, Plane)
     xVector1 = xPlane1.normVector()
     xVector2 = xPlane2.normVector()
     tempDelta = xVector2 - xVector1
+    if abs(tempDelta.x) < EPSILONS and abs(tempDelta.y) < EPSILONS and abs(tempDelta.z) < EPSILONS:
+        return None
+    lineDirection = crossMultiply(xVector1, xVector2)
+    lineDirection = lineDirection / lineDirection.norm()
+    # 必须考虑平面与坐标系接近平行的情况，不然可能使直线无限长
+    xPoint1 = xPlane1.point0
+    xPoint2 = xPlane2.point0
+    xD1 = -dotMultiply(xVector1, xPoint1)
+    xD2 = -dotMultiply(xVector2, xPoint2)
+    maxAxis = max([lineDirection.x, lineDirection.y, lineDirection.z])
+    if maxAxis == lineDirection.x:  # 偏向于X轴
+        xA1, xA2, xB1, xB2 = xVector1.y, xVector2.y, xVector1.z, xVector2.z
+        tempX = 0
+        tempY = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
+        tempZ = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
+        startPoint = Point3D(tempX, tempY, tempZ)
+        tempX = 100
+        xD1 = xD1 + xVector1.x * tempX
+        xD2 = xD2 + xVector2.x * tempX
+        tempY = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
+        tempZ = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
+        endPoint = Point3D(tempX, tempY, tempZ)
+    elif maxAxis == lineDirection.y:  # 偏向于y轴
+        xA1, xA2, xB1, xB2 = xVector1.x, xVector2.x, xVector1.z, xVector2.z
+        tempY = 0
+        tempX = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
+        tempZ = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
+        startPoint = Point3D(tempX, tempY, tempZ)
+        tempY = 100
+        xD1 = xD1 + xVector1.y * tempY
+        xD2 = xD2 + xVector2.y * tempY
+        tempX = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
+        tempZ = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
+        endPoint = Point3D(tempX, tempY, tempZ)
+    else:  # 偏向于z轴
+        xA1, xA2, xB1, xB2 = xVector1.x, xVector2.x, xVector1.y, xVector2.y
+        tempZ = 0
+        tempX = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
+        tempY = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
+        startPoint = Point3D(tempX, tempY, tempZ)
+        tempZ = 100
+        xD1 = xD1 + xVector1.z * tempZ
+        xD2 = xD2 + xVector2.z * tempZ
+        tempX = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
+        tempY = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
+        endPoint = Point3D(tempX, tempY, tempZ)
+    # 返回直线的方向，起始点，终止点
+    return lineDirection, startPoint, endPoint
 
 
 if __name__ == '__main__':
-    ttt = RotateMatrix('x', pi / 2)
+    ttt = RotateMatrix('x', math.pi / 2)
     print(ttt)

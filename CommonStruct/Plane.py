@@ -40,6 +40,30 @@ class Plane:
         vector3 = Operations.crossMultiply(vector1, vector2)
         return vector3 / vector3.norm()  # 单位化
 
+    @property
+    def point0(self):
+        return self.__point0
+
+    @property
+    def point1(self):
+        return self.__point1
+
+    @property
+    def point2(self):
+        return self.__point2
+
+    @point0.setter
+    def point0(self, xPoint):
+        self.__point0 = xPoint
+
+    @point1.setter
+    def point1(self, xPoint):
+        self.__point1 = xPoint
+
+    @point2.setter
+    def point2(self, xPoint):
+        self.__point2 = xPoint
+
     def __str__(self):
         return '[%s,\n %s,\n %s]' % (self.__point0, self.__point1, self.__point2)
 
