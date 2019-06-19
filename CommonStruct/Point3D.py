@@ -1,7 +1,7 @@
 """
 三维空间点
 """
-from CommonStruct import Point2D
+from CommonStruct import Point2D, Matrix3D
 
 
 class Point3D:
@@ -39,6 +39,13 @@ class Point3D:
     def __mul__(self, xOther):
         if isinstance(xOther, (int, float)):
             return Point3D(self.__x * xOther, self.__y * xOther, self.__z * xOther)
+        elif isinstance(xOther, Point3D):
+            # 将Point3D相乘理解为1*3的矩阵相乘，列向量乘以行向量
+            temp1 = [self.x * xOther.x, self.x * xOther.y, self.x * xOther.z]
+            temp2 = [self.y * xOther.x, self.y * xOther.y, self.y * xOther.z]
+            temp3 = [self.z * xOther.x, self.z * xOther.y, self.z * xOther.z]
+            tempList = [temp1, temp2, temp3]
+            return Matrix3D(tempList)
         else:
             return None
 
@@ -86,4 +93,6 @@ class Point3D:
 
 
 if __name__ == "__main__":
-    pass
+    testPoint1 = Point3D(1, 1, 1)
+    testPoint2 = Point3D(2, 2, 2)
+    print(testPoint1 * testPoint2)

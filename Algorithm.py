@@ -27,16 +27,14 @@ def Rodrigues(xVector):
     else:
         itheta = 1 / theta
     xVector = xVector * itheta
-    ax = Point3D.toArray(xVector)
+    # ax = Point3D.toArray(xVector)
 
-    rrt = Matrix3D([[ax[0] * ax[0], ax[0] * ax[1], ax[0] * ax[2]],
-                    [ax[1] * ax[0], ax[1] * ax[1], ax[1] * ax[2]],
-                    [ax[2] * ax[0], ax[2] * ax[1], ax[2] * ax[2]]])
-    r_x = Matrix3D([[0, -ax[2], ax[1]],
-                    [ax[2], 0, -ax[0]],
-                    [-ax[1], ax[0], 0]])
-    ae = eye(3)
-    r = c * ae + c1 * rrt + s * r_x
+    rrt = xVector * xVector
+    r_x = Matrix3D([[0, -xVector.z, xVector.y],
+                    [xVector.z, 0, -xVector.x],
+                    [-xVector.y, xVector.x, 0]])
+    ae = Matrix3D.eye()
+    r = c * ae + s * r_x + c1 * rrt
     return r
 
 
