@@ -27,11 +27,11 @@ class Matrix3D:
             tempOrigin = self * xOther.origin
             tempDirection = self * xOther.direction
             return Line3D(tempOrigin, tempDirection)
-        # elif isinstance(xOther, Matrix3D):
-        #     # 矩阵相乘
-        #     return self.__data * xOther.__data
-        # elif isinstance(xOther, (int, float)):
-        #     return self.__data * xOther
+        elif isinstance(xOther, Matrix3D):
+            # 矩阵相乘
+            return self.__data * xOther.__data
+        elif isinstance(xOther, (int, float)):
+            return self.__data * xOther
         else:
             return None
 
