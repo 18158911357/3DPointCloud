@@ -1,6 +1,8 @@
-import math
 from copy import deepcopy
 
+import math
+
+from CommonStruct.Matrix3D import Matrix3D
 from CommonStruct.Point3D import Point3D
 
 
@@ -52,6 +54,7 @@ class Quaternion:
         return Quaternion(tempS, tempV)
 
     def rotatePrint(self):
+        # 打印四元数对应的旋转角度与旋转轴
         xTheta = 2 * math.acos(self.__s)
         xAxis = self.__v / math.sin(xTheta / 2)
         print('旋转角度为：', xTheta, end=' ')
@@ -100,6 +103,35 @@ def Rotate(xPoint, xQuaternion):
     else:
         print('输入的四元数有误')
         return None
+
+
+def matrixToQuaternion(xMatrix):
+    # 由矩阵到四元数的转换
+    assert isinstance(xMatrix, Matrix3D)
+    tempQ0 = (xMatrix.trace() + 1) ** 0.5 / 2
+    tempQ1 = (xMatrix[1][2] - xMatrix[2][1]) / (4 * tempQ0)
+    tempQ2 = (xMatrix[2][0] - xMatrix[0][2]) / (4 * tempQ0)
+    tempQ3 = (xMatrix[0][1] - xMatrix[1][0]) / (4 * tempQ0)
+    return Quaternion(tempQ0, Point3D(tempQ1, tempQ2, tempQ3))
+
+
+def quaternionToMatrix(xQuaternion):
+    # 由四元数到矩阵的转换
+    assert isinstance(xQuaternion, Quaternion)
+    tempQ0 = xQuaternion.s
+    tempQ1 = xQuaternion.v.x
+    tempQ2 = xQuaternion.v.y
+    tempQ3 = xQuaternion.v.z
+    R00 = 1 - 2 * tempQ2 ** 2 - 2 * tempQ3 ** 2
+    R01 = 2 * tempQ1 * tempQ2 + 2 * tempQ0 * tempQ3
+    R02 = 2 * tempQ1 * tempQ3 - 2 * tempQ0 * tempQ2
+    R10 = 2 * tempQ1 * tempQ2 - 2 * tempQ0 * tempQ3
+    R11 = 1 - 2 * tempQ1 ** 2 - 2 * tempQ3 ** 2
+    R12 = 2 * tempQ2 * tempQ3 + 2 * tempQ0 * tempQ1
+    R20 = 2 * tempQ1 * tempQ3 + 2 * tempQ0 * tempQ2
+    R21 = 2 * tempQ2 * tempQ3 - 2 * tempQ0 * tempQ1
+    R22 = 1 - 2 * tempQ1 ** 2 - 2 * tempQ2 ** 2
+    return Matrix3D([[R00, R01, R02], [R10, R11, R12], [R20, R21, R22]])
 
 
 if __name__ == '__main__':

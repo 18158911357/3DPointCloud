@@ -42,8 +42,17 @@ class Matrix3D:
     def T(self):
         return list(zip(*self.__data))
 
+    def trace(self):
+        # 求矩阵的迹
+        pass
+
     def __str__(self):
         return str(self.__data)
+
+
+# 相似变换(待实现)
+# 仿射变换(待实现)
+# 射影变换(待实现)
 
 
 if __name__ == '__main__':
