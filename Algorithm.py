@@ -1,3 +1,5 @@
+import math
+
 from CommonStruct import *
 
 EPSILONS = 1e-5
@@ -7,7 +9,7 @@ def average(xNumList):
     return sum(xNumList) / len(xNumList)
 
 
-def Rodrigues():
+def Rodrigues(xVector):
     """
     罗德里格斯变换
     -x = [nx,ny,nz],\n
@@ -17,25 +19,25 @@ def Rodrigues():
 
     :return: 变换矩阵
     """
-    # assert isinstance(xVector, Point3D)
-    # theta = xVector.norm()
-    # s = math.sin(theta)
-    # c = math.cos(theta)
-    # c1 = 1.0 - c
-    # if theta == 0:
-    #     itheta = 0
-    # else:
-    #     itheta = 1 / theta
-    # xVector = xVector * itheta
-    # # ax = Point3D.toArray(xVector)
-    #
-    # rrt = xVector * xVector
-    # r_x = Matrix3D([[0, -xVector.z, xVector.y],
-    #                 [xVector.z, 0, -xVector.x],
-    #                 [-xVector.y, xVector.x, 0]])
-    # ae = Matrix3D.eye()
-    # r = c * ae + s * r_x + c1 * rrt
-    # return r
+    assert isinstance(xVector, Point3D)
+    theta = xVector.norm()
+    s = math.sin(theta)
+    c = math.cos(theta)
+    c1 = 1.0 - c
+    if theta == 0:
+        itheta = 0
+    else:
+        itheta = 1 / theta
+    xVector = xVector * itheta
+    # ax = Point3D.toArray(xVector)
+
+    rrt = xVector * xVector
+    r_x = Matrix3D.Matrix3D([[0, -xVector.z, xVector.y],
+                             [xVector.z, 0, -xVector.x],
+                             [-xVector.y, xVector.x, 0]])
+    ae = Matrix3D.eye()
+    r = ae * c + r_x * s + rrt * c1
+    return r
     pass
 
 
@@ -50,11 +52,11 @@ def CoordinateMatrix(_axis, _theta):
     cTheta = math.cos(_theta)
     sTheta = math.sin(_theta)
     if _axis == 'x':
-        return Matrix3D([[1, 0, 0], [0, cTheta, sTheta], [0, -sTheta, cTheta]])
+        return Matrix3D.Matrix3D([[1, 0, 0], [0, cTheta, sTheta], [0, -sTheta, cTheta]])
     elif _axis == 'y':
-        return Matrix3D([[cTheta, 0, -sTheta], [0, 1, 0], [sTheta, 0, cTheta]])
+        return Matrix3D.Matrix3D([[cTheta, 0, -sTheta], [0, 1, 0], [sTheta, 0, cTheta]])
     elif _axis == 'z':
-        return Matrix3D([[cTheta, sTheta, 0], [-sTheta, cTheta, 0], [0, 0, 1]])
+        return Matrix3D.Matrix3D([[cTheta, sTheta, 0], [-sTheta, cTheta, 0], [0, 0, 1]])
     else:
         return None
 
@@ -70,11 +72,11 @@ def RotateMatrix(_axis, _theta):
     cTheta = math.cos(_theta)
     sTheta = math.sin(_theta)
     if _axis == 'x':
-        return Matrix3D([[1, 0, 0], [0, cTheta, -sTheta], [0, sTheta, cTheta]])
+        return Matrix3D.Matrix3D([[1, 0, 0], [0, cTheta, -sTheta], [0, sTheta, cTheta]])
     elif _axis == 'y':
-        return Matrix3D([[cTheta, 0, sTheta], [0, 1, 0], [-sTheta, 0, cTheta]])
+        return Matrix3D.Matrix3D([[cTheta, 0, sTheta], [0, 1, 0], [-sTheta, 0, cTheta]])
     elif _axis == 'z':
-        return Matrix3D([[cTheta, -sTheta, 0], [sTheta, cTheta, 0], [0, 0, 1]])
+        return Matrix3D.Matrix3D([[cTheta, -sTheta, 0], [sTheta, cTheta, 0], [0, 0, 1]])
     else:
         return None
 
@@ -115,7 +117,7 @@ def GetLineEndPoints(xPointIn, xResultLine):
     return EndPoints
 
 
-def CalLine_Parall_Line(xPointsIn, xLineRef, xExcludeNum, xAverageNum, xDistMethod='Avg'):
+def CalLineParallLine(xPointsIn, xLineRef, xExcludeNum, xAverageNum, xDistMethod='Avg'):
     """
     根据参考线计算平行线
 
@@ -157,6 +159,25 @@ def CalLine_Parall_Line(xPointsIn, xLineRef, xExcludeNum, xAverageNum, xDistMeth
     c = xLineRef.c - nLineShift * nSign
     lineOut = Line2D(a, b, c)
     return lineOut
+
+
+def CalLinePerpendLine(xPointsIn, xLineRef, xPointRef, xExcludeNum, xAverageNum, xDistMethod='Avg'):
+    """
+    计算垂线，本质是改变参考线的方向，然后计算平行线
+
+    :param xPointsIn:
+    :param xLineRef:
+    :param xPointRef:
+    :param xExcludeNum:
+    :param xAverageNum:
+    :param xDistMethod:
+    :return:
+    """
+    tempLineRefParall = Line2D.Line2D()
+    tempLineRefParall.a = -xLineRef.b
+    tempLineRefParall.b = xLineRef.a
+    tempLineRefParall.c = -xLineRef.a * xPointRef.x - xLineRef.b * xPointRef.y
+    CalLineParallLine(xPointsIn, tempLineRefParall, xExcludeNum, xAverageNum, xDistMethod)
 
 
 def Geom_Dist_Point_Line(xPoint, xLine):
@@ -216,13 +237,13 @@ def IntersectionLine(xPlane1, xPlane2):
     tempDelta = xVector2 - xVector1
     if abs(tempDelta.x) < EPSILONS and abs(tempDelta.y) < EPSILONS and abs(tempDelta.z) < EPSILONS:
         return None
-    lineDirection = crossMultiply(xVector1, xVector2)
+    lineDirection = Operations.crossMultiply(xVector1, xVector2)
     lineDirection = lineDirection / lineDirection.norm()
     # 必须考虑平面与坐标系接近平行的情况，不然可能使直线无限长
     xPoint1 = xPlane1.point0
     xPoint2 = xPlane2.point0
-    xD1 = -dotMultiply(xVector1, xPoint1)
-    xD2 = -dotMultiply(xVector2, xPoint2)
+    xD1 = -Operations.dotMultiply(xVector1, xPoint1)
+    xD2 = -Operations.dotMultiply(xVector2, xPoint2)
     maxAxis = max([lineDirection.x, lineDirection.y, lineDirection.z])
     if maxAxis == lineDirection.x:  # 偏向于X轴
         xA1, xA2, xB1, xB2 = xVector1.y, xVector2.y, xVector1.z, xVector2.z
@@ -262,6 +283,67 @@ def IntersectionLine(xPlane1, xPlane2):
         endPoint = Point3D(tempX, tempY, tempZ)
     # 返回直线的方向，起始点，终止点
     return lineDirection, startPoint, endPoint
+
+
+def isPoint2DInPolygon(xPoint, xVertices):
+    """
+        判断点是否在多边形内部
+        1. 被测点是否在两个相邻点纵坐标范围内
+        2. 被测点是否在i，j两点的连线之下
+        3. 取反：以被测点为起点，作一条平行于x轴的射线，看该射线与多边形相交的点数
+            取反的次数即为射线与多边形的交点
+                若相交的点数为奇数，则表示点在多边形内部
+                若相交的点为偶数，则表示点在多边形外部
+
+    :param xPoint:
+    :param xVertices:
+    :return:
+    """
+    assert isinstance(xPoint, Point2D.Point2D) and isinstance(xVertices, list)
+    bRet = False
+    j = len(xVertices) - 1
+    for i in range(len(xVertices)):
+        if ((xVertices[i].y < xPoint.y) and (xVertices[j].y >= xPoint.y)) \
+                or ((xVertices[i].y >= xPoint.y) and (xVertices[j].y < xPoint.y)):
+            if xVertices[i].x + (xPoint.y - xVertices[i].y) / (xVertices[j].y - xVertices[i].y) * (
+                    xVertices[j].x - xVertices[i].x) < xPoint.x:
+                bRet = not bRet
+        j = i
+    return bRet
+
+
+def isPoint3DInPolygon(xPoint, xProjectPlane, xVectics):
+    """
+    判断点是否在3D多边形内（注意3D多边形与多面体的区别），点在坐标平面上
+    实际上是先将3D多边形投影到坐标平面上，然后判断点是否在2D多边形内
+
+    :param xPoint:
+    :param xProjectPlane:
+    :param xVectics:
+    :return:
+    """
+    bRet = False
+    j = len(xVectics) - 1
+    tempVectics = []
+    if xProjectPlane == 'XY':
+        for x in xVectics:
+            tempVectics.append(Point3D.Point3D(x.x, x.y))
+    elif xProjectPlane == 'XZ':
+        for x in xVectics:
+            tempVectics.append(Point3D.Point3D(x.x, x.z))
+    elif xProjectPlane == 'YZ':
+        for x in xVectics:
+            tempVectics.append(Point3D.Point3D(x.y, x.z))
+    else:
+        pass
+    for i in range(len(tempVectics)):
+        if ((tempVectics[i].y < xPoint.y) and (tempVectics[j].y >= xPoint.y)) \
+                or ((tempVectics[i].y >= xPoint.y) and (tempVectics[j].y < xPoint.y)):
+            if tempVectics[i].x + (xPoint.y - tempVectics[i].y) / (tempVectics[j].y - tempVectics[i].y) * (
+                    tempVectics[j].x - tempVectics[i].x) < xPoint.x:
+                bRet = not bRet
+        j = i
+    return bRet
 
 
 if __name__ == '__main__':
