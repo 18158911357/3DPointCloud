@@ -1,3 +1,4 @@
+import math
 from copy import deepcopy
 
 from CommonStruct.Point3D import Point3D
@@ -50,6 +51,12 @@ class Quaternion:
         tempV = self.__v / tempNorm
         return Quaternion(tempS, tempV)
 
+    def rotatePrint(self):
+        xTheta = 2 * math.acos(self.__s)
+        xAxis = self.__v / math.sin(xTheta / 2)
+        print('旋转角度为：', xTheta, end=' ')
+        print('旋转轴为：', xAxis)
+
     @property
     def s(self):
         return self.__s
@@ -81,6 +88,18 @@ def dotMul(xQuaternion: Quaternion, yQuaternion: Quaternion):
     tempVy = xQuaternion.v.y * yQuaternion.v.y
     tempVz = xQuaternion.v.z * yQuaternion.v.z
     return Quaternion(tempS, Point3D(tempVx, tempVy, tempVz))
+
+
+def Rotate(xPoint, xQuaternion):
+    # 用四元数表示旋转，计算结果为纯虚四元数，虚部的三个分量表示旋转后的3D点坐标
+    assert isinstance(xPoint, Point3D) and isinstance(xQuaternion, Quaternion)
+    xP = Quaternion(0, xPoint)
+    tempQuaternion = xQuaternion * xP * xQuaternion.inverseQuaternion()
+    if tempQuaternion.s == 0:
+        return tempQuaternion.v
+    else:
+        print('输入的四元数有误')
+        return None
 
 
 if __name__ == '__main__':
