@@ -1,5 +1,7 @@
 import time
 
+Flag_Test = False  # 是否进入调试
+
 
 def getLocalDate():
     """
@@ -27,9 +29,24 @@ def newLogFile():
     新建log文件，文件名为‘log-当前日期’
     """
     xLogFilePath = getLogFileName()
-    with open(xLogFilePath, 'a') as f:
+    with open(xLogFilePath, 'w') as f:
         print('##############################  %s  ##############################' % getLocalDate(), file=f)
 
 
+def writeLogFile(xs):
+    """
+    将字符串xs写入log文件中，并加入当前时间
+    """
+    xLogFileName = getLogFileName()
+    with open(xLogFileName, 'a') as xLogFile:
+        print('%s || ' % getLocalTime() + xs, file=xLogFile)
+
+
 if __name__ == '__main__':
-    newLogFile()
+    if Flag_Test:
+        start = time.time()
+        newLogFile()
+        for i in range(10000):
+            writeLogFile("我就是试试，试试就试试!")
+        end = time.time()
+        print(end - start)
