@@ -1,5 +1,5 @@
 import math
-from CommonStruct.Point3D import Point3D
+from Point3D import *
 
 
 def crossMultiply(xPoint1, xPoint2):

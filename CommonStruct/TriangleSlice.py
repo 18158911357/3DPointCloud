@@ -1,6 +1,6 @@
 from copy import deepcopy
-from CommonStruct.Point3D import Point3D
-from CommonStruct.Triangle import Triangle
+from Point3D import *
+from Triangle import *
 
 
 class TriangleSlice:

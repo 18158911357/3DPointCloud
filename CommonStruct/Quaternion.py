@@ -1,9 +1,7 @@
 from copy import deepcopy
-
 import math
-
-from CommonStruct.Matrix3D import Matrix3D
-from CommonStruct.Point3D import Point3D
+from Matrix3D import *
+from Point3D import *
 
 
 # 四元数

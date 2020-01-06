@@ -72,5 +72,5 @@ class Point2D:
 
 
 if __name__ == '__main__':
-    testPoint = Point2D()
-    print(testPoint)
+    tPoint2D = Point2D()
+    print(tPoint2D)

@@ -19,7 +19,7 @@ def Rodrigues(xVector):
 
     :return: 变换矩阵
     """
-    assert isinstance(xVector, Point3D)
+    assert isinstance(xVector, zPoint3D)
     theta = xVector.norm()
     s = math.sin(theta)
     c = math.cos(theta)
@@ -32,10 +32,10 @@ def Rodrigues(xVector):
     # ax = Point3D.toArray(xVector)
 
     rrt = xVector * xVector
-    r_x = Matrix3D.Matrix3D([[0, -xVector.z, xVector.y],
-                             [xVector.z, 0, -xVector.x],
-                             [-xVector.y, xVector.x, 0]])
-    ae = Matrix3D.eye()
+    r_x = zMatrix3D.Matrix3D([[0, -xVector.z, xVector.y],
+                              [xVector.z, 0, -xVector.x],
+                              [-xVector.y, xVector.x, 0]])
+    ae = zMatrix3D.eye()
     r = ae * c + r_x * s + rrt * c1
     return r
     pass
@@ -52,11 +52,11 @@ def CoordinateMatrix(_axis, _theta):
     cTheta = math.cos(_theta)
     sTheta = math.sin(_theta)
     if _axis == 'x':
-        return Matrix3D.Matrix3D([[1, 0, 0], [0, cTheta, sTheta], [0, -sTheta, cTheta]])
+        return zMatrix3D.Matrix3D([[1, 0, 0], [0, cTheta, sTheta], [0, -sTheta, cTheta]])
     elif _axis == 'y':
-        return Matrix3D.Matrix3D([[cTheta, 0, -sTheta], [0, 1, 0], [sTheta, 0, cTheta]])
+        return zMatrix3D.Matrix3D([[cTheta, 0, -sTheta], [0, 1, 0], [sTheta, 0, cTheta]])
     elif _axis == 'z':
-        return Matrix3D.Matrix3D([[cTheta, sTheta, 0], [-sTheta, cTheta, 0], [0, 0, 1]])
+        return zMatrix3D.Matrix3D([[cTheta, sTheta, 0], [-sTheta, cTheta, 0], [0, 0, 1]])
     else:
         return None
 
@@ -72,11 +72,11 @@ def RotateMatrix(_axis, _theta):
     cTheta = math.cos(_theta)
     sTheta = math.sin(_theta)
     if _axis == 'x':
-        return Matrix3D.Matrix3D([[1, 0, 0], [0, cTheta, -sTheta], [0, sTheta, cTheta]])
+        return zMatrix3D.Matrix3D([[1, 0, 0], [0, cTheta, -sTheta], [0, sTheta, cTheta]])
     elif _axis == 'y':
-        return Matrix3D.Matrix3D([[cTheta, 0, sTheta], [0, 1, 0], [-sTheta, 0, cTheta]])
+        return zMatrix3D.Matrix3D([[cTheta, 0, sTheta], [0, 1, 0], [-sTheta, 0, cTheta]])
     elif _axis == 'z':
-        return Matrix3D.Matrix3D([[cTheta, -sTheta, 0], [sTheta, cTheta, 0], [0, 0, 1]])
+        return zMatrix3D.Matrix3D([[cTheta, -sTheta, 0], [sTheta, cTheta, 0], [0, 0, 1]])
     else:
         return None
 
@@ -138,7 +138,7 @@ def CalLineParallLine(xPointsIn, xLineRef, xExcludeNum, xAverageNum, xDistMethod
     nDist = []
     for x, i in enumerate(xPointsIn):
         assert isinstance(x, list)
-        xPoint = Point3D(*x)
+        xPoint = zPoint3D(*x)
         nDist[i] = Geom_Dist_Point_Line(xPoint, xLineRef) * nSign
     if xDistMethod == 'Avg':
         nLineShift = average(nDist)
@@ -217,8 +217,8 @@ def Find3DBox(xPointsIn):
     dYMin = min(tempPoints[1])
     dZMax = max(tempPoints[2])
     dZMin = min(tempPoints[2])
-    maxPoint = Point3D(dXMax, dYMax, dZMax)
-    minPoint = Point3D(dXMin, dYMin, dZMin)
+    maxPoint = zPoint3D(dXMax, dYMax, dZMax)
+    minPoint = zPoint3D(dXMin, dYMin, dZMin)
     min3DBox = Box3D(minPoint, maxPoint)
     return min3DBox
 
@@ -250,37 +250,37 @@ def IntersectionLine(xPlane1, xPlane2):
         tempX = 0
         tempY = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
         tempZ = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
-        startPoint = Point3D(tempX, tempY, tempZ)
+        startPoint = zPoint3D(tempX, tempY, tempZ)
         tempX = 100
         xD1 = xD1 + xVector1.x * tempX
         xD2 = xD2 + xVector2.x * tempX
         tempY = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
         tempZ = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
-        endPoint = Point3D(tempX, tempY, tempZ)
+        endPoint = zPoint3D(tempX, tempY, tempZ)
     elif maxAxis == lineDirection.y:  # 偏向于y轴
         xA1, xA2, xB1, xB2 = xVector1.x, xVector2.x, xVector1.z, xVector2.z
         tempY = 0
         tempX = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
         tempZ = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
-        startPoint = Point3D(tempX, tempY, tempZ)
+        startPoint = zPoint3D(tempX, tempY, tempZ)
         tempY = 100
         xD1 = xD1 + xVector1.y * tempY
         xD2 = xD2 + xVector2.y * tempY
         tempX = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
         tempZ = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
-        endPoint = Point3D(tempX, tempY, tempZ)
+        endPoint = zPoint3D(tempX, tempY, tempZ)
     else:  # 偏向于z轴
         xA1, xA2, xB1, xB2 = xVector1.x, xVector2.x, xVector1.y, xVector2.y
         tempZ = 0
         tempX = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
         tempY = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
-        startPoint = Point3D(tempX, tempY, tempZ)
+        startPoint = zPoint3D(tempX, tempY, tempZ)
         tempZ = 100
         xD1 = xD1 + xVector1.z * tempZ
         xD2 = xD2 + xVector2.z * tempZ
         tempX = (xB1 * xD2 - xB2 * xD1) / (xA1 * xB2 - xA2 * xB1)
         tempY = (xA2 * xD1 - xA1 * xD2) / (xA1 * xB2 - xA2 * xB1)
-        endPoint = Point3D(tempX, tempY, tempZ)
+        endPoint = zPoint3D(tempX, tempY, tempZ)
     # 返回直线的方向，起始点，终止点
     return lineDirection, startPoint, endPoint
 
@@ -327,13 +327,13 @@ def isPoint3DInPolygon(xPoint, xProjectPlane, xVectics):
     tempVectics = []
     if xProjectPlane == 'XY':
         for x in xVectics:
-            tempVectics.append(Point3D.Point3D(x.x, x.y))
+            tempVectics.append(zPoint3D.Point3D(x.x, x.y))
     elif xProjectPlane == 'XZ':
         for x in xVectics:
-            tempVectics.append(Point3D.Point3D(x.x, x.z))
+            tempVectics.append(zPoint3D.Point3D(x.x, x.z))
     elif xProjectPlane == 'YZ':
         for x in xVectics:
-            tempVectics.append(Point3D.Point3D(x.y, x.z))
+            tempVectics.append(zPoint3D.Point3D(x.y, x.z))
     else:
         pass
     for i in range(len(tempVectics)):

@@ -1,5 +1,5 @@
 from copy import deepcopy
-from CommonStruct.Point2D import Point2D
+from Point2D import *
 
 
 class Box2D:
@@ -69,9 +69,9 @@ class Box2D:
         self.__maxPoint = deepcopy(xMaxPoint)
 
     def __str__(self):
-        return 'minPoint:%s, maxPoint:%s' % (self.__minPoint, self.__minPoint)
+        return 'minPoint:%s, maxPoint:%s' % (self.__minPoint, self.__maxPoint)
 
 
 if __name__ == '__main__':
-    tBox = Box2D()
-    print(tBox)
+    tBox2D = Box2D()
+    print(tBox2D)

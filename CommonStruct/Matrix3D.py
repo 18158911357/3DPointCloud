@@ -1,4 +1,6 @@
 import numpy
+from Point3D import *
+from Line3D import *
 
 
 class Matrix3D:
@@ -56,5 +58,4 @@ class Matrix3D:
 
 
 if __name__ == '__main__':
-    from CommonStruct import Point3D
-    from CommonStruct import Line3D
+    pass

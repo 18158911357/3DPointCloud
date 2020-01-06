@@ -1,6 +1,6 @@
 from copy import deepcopy
-from CommonStruct.Point3D import Point3D
-from CommonStruct import Operations
+from Point3D import *
+import Operations
 
 
 class Plane:

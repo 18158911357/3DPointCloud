@@ -37,7 +37,7 @@ class Line2D:
         self.__c = xc
 
     def __str__(self):
-        return '[%s, %s, %s]' % (self.__a, self.__b, self.__c)
+        return 'Line2D:(%s, %s, %s)' % (self.__a, self.__b, self.__c)
 
 
 if __name__ == '__main__':
