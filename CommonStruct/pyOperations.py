@@ -1,5 +1,5 @@
 import math
-from Point3D import *
+from Geometric import Point3D
 
 
 def crossMultiply(xPoint1, xPoint2):

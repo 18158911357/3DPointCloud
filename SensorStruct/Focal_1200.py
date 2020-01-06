@@ -2,8 +2,8 @@
 Focal 1200 型号参数
 """
 from numpy import *
-from CommonStruct import Line3D
-from CommonStruct import Point3D
+from CommonStruct import pyLine3D
+from CommonStruct import pyPoint3D
 import Algorithm
 
 
@@ -36,15 +36,15 @@ class Focal_1200:
         self.z_range = 2.8
         self.max_slope = 20
         #####################################################
-        self.location = Point3D()  # 传感器的安装位置(平移向量)
+        self.location = pyPoint3D()  # 传感器的安装位置(平移向量)
         # 约定：传感器的默认激光为在x方向上的分布
         # 传感器的默认安装方式(传感器坐标系与世界坐标系一致)
         self.Mounting_method = array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-        self.Fix_Posture = Point3D()  # 传感器的安装姿态(旋转向量)
+        self.Fix_Posture = pyPoint3D()  # 传感器的安装姿态(旋转向量)
         # region 激光初始化
-        self.LaserLine = [Line3D(i * self.pixel_size_x, 0, 0) for i in range(self.pixel_num_x)]
+        self.LaserLine = [pyLine3D(i * self.pixel_size_x, 0, 0) for i in range(self.pixel_num_x)]
         for i in range(len(self.LaserLine)):
-            self.LaserLine[i].direction = Point3D(0, 0, -1)
+            self.LaserLine[i].direction = pyPoint3D(0, 0, -1)
             print(i, self.LaserLine[i])
         # endregion
 
@@ -73,9 +73,9 @@ if __name__ == '__main__':
     print(len(focal.LaserLine))
     for iii4 in focal.LaserLine:
         print(iii4)
-    li = Point3D(1, 1, 1)
+    li = pyPoint3D(1, 1, 1)
     mi = Algorithm.RotateMatrix('z', pi / 2)
-    pii = Point3D(0, 0, 0)
+    pii = pyPoint3D(0, 0, 0)
     focal.Fix(li, mi, pii)
     for iii in focal.LaserLine:
         print(iii)
