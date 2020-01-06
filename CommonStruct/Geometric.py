@@ -389,8 +389,8 @@ class Plane:
                 self.__point2 = Point3D(0, 0, 0)
                 self.__point2.x = self.__point0.x - (self.__point1.z - self.__point0.z) * xVector.y
                 self.__point2.y = self.__point0.y + (self.__point1.z - self.__point0.z) * xVector.x
-                self.__point2.z = self.__point0.z + (self.__point1.x - self.__point0.x) * xVector.y \
-                                  - (self.__point1.y - self.__point0.y) * xVector.x
+                self.__point2.z = self.__point0.z + (self.__point1.x - self.__point0.x) * xVector.y - (
+                        self.__point1.y - self.__point0.y) * xVector.x
             else:
                 temp = pyOperations.dotMultiply(xPoint, xVector)
                 self.__point1 = Point3D(xPoint.x, xPoint.y + 1, 0)
@@ -688,6 +688,7 @@ class Matrix3D:
 
     def trace(self):
         # 求矩阵的迹
+        # 在线性代数中，一个n×n矩阵A的主对角线（从左上方至右下方的对角线）上各个元素的总和被称为矩阵A的迹（或迹数）
         pass
 
     def __str__(self):
