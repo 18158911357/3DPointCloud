@@ -162,7 +162,7 @@ class Point3D:
         return Point2D(self.x, self.y)
 
     def __str__(self):
-        return '(%s, %s, %s)' % (self.__x, self.__y, self.__z)
+        return '%s, %s, %s' % (self.__x, self.__y, self.__z)
 
 
 class Line2D:

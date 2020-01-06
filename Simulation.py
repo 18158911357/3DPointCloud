@@ -10,8 +10,8 @@ def createLine():
     xDirection = Point3D(0, 0, -1)
     xOrigin = []
     xLineList = []
-    for i in range(100):
-        xOrigin.append(Point3D(i * 0.1, 0, 0))
+    for i in range(200):
+        xOrigin.append(Point3D(i * 0.5 - 50, 0, 0))
         xLineList.append(Line3D(xOrigin[i], xDirection))
     return xLineList
 
@@ -26,7 +26,7 @@ def calcIntersection_LineAndTriangleSlice(xLine, xTriangleSlice):
     assert isinstance(xTriangleSlice, TriangleSlice) and isinstance(xLine, Line3D)
     xPlane = Plane(xTriangleSlice.vertex.vertex1, xTriangleSlice.facet)
     xInterSectionPoint = calcIntersection_LineAndPlane(xLine, xPlane)
-    if xTriangleSlice.vertex.isInTriangle(xInterSectionPoint):
+    if xInterSectionPoint and xTriangleSlice.vertex.isInTriangle(xInterSectionPoint):
         return xInterSectionPoint
     else:
         return None
@@ -46,9 +46,12 @@ def calcIntersection_LineAndPlane(xLine, xPlane):
     tvp1 = xPlane.normVector().x
     tvp2 = xPlane.normVector().y
     tvp3 = xPlane.normVector().z
-    temp = (tvp1 * (tn1 - tm1) + tvp2 * (tn2 - tm2) + tvp3 * (tn3 - tm3)) / \
-           (tvp1 * tv1 + tvp2 * tv2 + tvp3 * tv3)
-    return Point3D(tm1 + tv1 * temp, tm2 + tv2 * temp, tm3 + tv3 * temp)
+    if (tvp1 * tv1 + tvp2 * tv2 + tvp3 * tv3) != 0:
+        temp = (tvp1 * (tn1 - tm1) + tvp2 * (tn2 - tm2) + tvp3 * (tn3 - tm3)) / \
+               (tvp1 * tv1 + tvp2 * tv2 + tvp3 * tv3)
+        return Point3D(tm1 + tv1 * temp, tm2 + tv2 * temp, tm3 + tv3 * temp)
+    else:
+        return None
 
 
 def readModel(xSTLModelPath):
@@ -57,18 +60,20 @@ def readModel(xSTLModelPath):
 
 
 if __name__ == '__main__':
-    tSTLPath = r'D:\Mesh.stl'
+    tSTLPath = r'D:\STLModel.stl'
     tSTLModel = readModel(tSTLPath).listTri
-    iline = Line3D(Point3D(0, 0, 1), Point3D(0, 0, -1))
+    # iline = Line3D(Point3D(0, 0, 1), Point3D(0, 0, -1))
+    tLineList = createLine()
     tPointList = []
     xxx = 0
-    for ti in range(1):
-        for x in tSTLModel:
-            interSectionPoint = calcIntersection_LineAndTriangleSlice(iline, x)
-            if interSectionPoint:
-                tPointList.append(interSectionPoint)
-        xxx += 1
-        print(xxx)
+    for iline in tLineList:
+        for ti in range(1):
+            for x in tSTLModel:
+                interSectionPoint = calcIntersection_LineAndTriangleSlice(iline, x)
+                if interSectionPoint:
+                    tPointList.append(interSectionPoint)
+            xxx += 1
+            print(xxx)
     tPointPath = r'D:\get.txt'
     print('共%d个点' % len(tPointList))
     with open(tPointPath, 'w') as f:
