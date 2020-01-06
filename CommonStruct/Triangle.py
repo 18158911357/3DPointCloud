@@ -1,11 +1,14 @@
 from copy import deepcopy
-from Point3D import *
+
 import math
+from Point3D import *
 
 
 class Triangle:
     def __init__(self, xVertex1=Point3D(), xVertex2=Point3D(), xVertex3=Point3D()):
-        assert isinstance(xVertex1, Point3D) and isinstance(xVertex2, Point3D) and isinstance(xVertex3, Point3D)
+        assert isinstance(xVertex1, Point3D) and \
+               isinstance(xVertex2, Point3D) and \
+               isinstance(xVertex3, Point3D)
         self.__vertex1 = deepcopy(xVertex1)
         self.__vertex2 = deepcopy(xVertex2)
         self.__vertex3 = deepcopy(xVertex3)

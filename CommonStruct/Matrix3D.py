@@ -1,6 +1,6 @@
 import numpy
-from Point3D import *
 from Line3D import *
+from Point3D import *
 
 
 class Matrix3D:

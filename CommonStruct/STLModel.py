@@ -1,7 +1,8 @@
 import struct
+from copy import deepcopy
+
 from Point3D import *
 from TriangleSlice import *
-from copy import deepcopy
 
 
 class STLModel:

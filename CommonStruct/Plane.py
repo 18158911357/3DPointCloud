@@ -1,6 +1,7 @@
 from copy import deepcopy
-from Point3D import *
+
 import Operations
+from Point3D import *
 
 
 class Plane:

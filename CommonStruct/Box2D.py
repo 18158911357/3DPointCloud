@@ -1,4 +1,5 @@
 from copy import deepcopy
+
 from Point2D import *
 
 

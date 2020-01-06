@@ -1,5 +1,5 @@
-from Point2D import *
 from Matrix3D import *
+from Point2D import *
 
 
 class Point3D:
