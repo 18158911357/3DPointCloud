@@ -1,6 +1,5 @@
 from copy import deepcopy
-from math import *
-import pyOperations
+import math
 import struct
 import numpy
 
@@ -381,7 +380,7 @@ class Box3D:
 class Plane:
     def __init__(self, *args):
         if len(args) == 2:  # 点法式构造  A(x-x0)+B(y-y0)+C(z-z0)=0
-            xPoint, xVector = args
+            xPoint, xVector = args  # 先点，再法
             self.__point0 = deepcopy(xPoint)
             if xVector.z == 0:
                 self.__point1 = deepcopy(self.__point0)
@@ -392,7 +391,7 @@ class Plane:
                 self.__point2.z = self.__point0.z + (self.__point1.x - self.__point0.x) * xVector.y - (
                         self.__point1.y - self.__point0.y) * xVector.x
             else:
-                temp = pyOperations.dotMultiply(xPoint, xVector)
+                temp = dotMultiply(xPoint, xVector)
                 self.__point1 = Point3D(xPoint.x, xPoint.y + 1, 0)
                 self.__point2 = Point3D(xPoint.x + 1, xPoint.y, 0)
                 self.__point1.z = (temp - xVector.x * self.__point1.x - xVector.y * self.__point1.y) / xVector.z
@@ -413,7 +412,7 @@ class Plane:
         """
         vector1 = self.__point1 - self.__point0
         vector2 = self.__point2 - self.__point0
-        vector3 = pyOperations.crossMultiply(vector1, vector2)
+        vector3 = crossMultiply(vector1, vector2)
         return vector3 / vector3.norm()  # 单位化
 
     @property
@@ -503,7 +502,7 @@ class Triangle:
         x_ABC = Point3D((Vector_AB.y * Vector_AC.z - Vector_AC.y * Vector_AB.z),
                         (Vector_AB.z * Vector_AC.x - Vector_AC.z * Vector_AB.x),
                         (Vector_AB.x * Vector_AC.y - Vector_AC.x * Vector_AB.y))
-        Triangle_Area = sqrt(x_ABC.x * x_ABC.x + x_ABC.y * x_ABC.y + x_ABC.z * x_ABC.x) / 2
+        Triangle_Area = math.sqrt(x_ABC.x * x_ABC.x + x_ABC.y * x_ABC.y + x_ABC.z * x_ABC.z) / 2
         return Triangle_Area
 
     def isInTriangle(self, xPoint):
@@ -517,7 +516,7 @@ class Triangle:
         area3 = triangle_2.area()
         area4 = triangle_3.area()
         areaAll = area2 + area3 + area4
-        if fabs(areaAll - area1) < area1 / 100:
+        if math.fabs(areaAll - area1) < area1 / 100:
             return True
         return False
 
@@ -572,19 +571,21 @@ class STLModel:
     def listTri(self, xListTri):
         self.__listTri = deepcopy(xListTri)
 
-    def ReadSTL(self, xPath):
+    @classmethod
+    def ReadSTL(cls, xPath):
         """
         从二进制文件中解析STL模型
 
         :param xPath: 文件路径
         :return: STL模型
         """
-        List_TriSlice = self.LoadBrinary(xPath)
+        List_TriSlice = cls.LoadBrinary(xPath)
         return STLModel(List_TriSlice)
 
     ###################
     # region STL读取函数
-    def LoadBrinary(self, strPath):
+    @classmethod
+    def LoadBrinary(cls, strPath):
         """
         读取STL二进制文件
 
@@ -597,10 +598,11 @@ class STLModel:
             temp = f.read(4)  # 流出4字节，文件中结构体的数量
             count = struct.unpack('I', temp)[0]
             for i in range(count):
-                List_TriangleSlice.append(self.TriangleSliceRead(f))
+                List_TriangleSlice.append(cls.TriangleSliceRead(f))
         return List_TriangleSlice
 
-    def TriangleSliceRead(self, f):
+    @classmethod
+    def TriangleSliceRead(cls, f):
         """
         从字节流中读取三角片
 
@@ -608,15 +610,15 @@ class STLModel:
         :return:
         """
         triSlice = TriangleSlice()
-        triSlice.facet = self.PointRead(f)
-        triSlice.vertex.vertex1 = self.PointRead(f)
-        triSlice.vertex.vertex2 = self.PointRead(f)
-        triSlice.vertex.vertex3 = self.PointRead(f)
+        triSlice.facet = cls.PointRead(f)
+        triSlice.vertex.vertex1 = cls.PointRead(f)
+        triSlice.vertex.vertex2 = cls.PointRead(f)
+        triSlice.vertex.vertex3 = cls.PointRead(f)
         f.read(2)
         return triSlice
 
-    @staticmethod
-    def PointRead(f):
+    @classmethod
+    def PointRead(cls, f):
         """
         从字节流中读取点(32位无符号整数，每次读取4个字节)
 
@@ -699,136 +701,94 @@ class Matrix3D:
     # 射影变换(待实现)
 
 
-# 四元数
-class Quaternion:
-    def __init__(self, xs, xv):
-        assert isinstance(xs, (int, float))
-        assert isinstance(xv, (Point3D,))
-        self.__s = xs
-        self.__v = deepcopy(xv)
+# class Quaternion:
+#     # 四元数
+#     def __init__(self, xs, xv):
+#         assert isinstance(xs, (int, float))
+#         assert isinstance(xv, (Point3D,))
+#         self.__s = xs
+#         self.__v = deepcopy(xv)
+#
+#     def __str__(self):
+#         tempStr = [self.__s, str(self.__v)]
+#         return str(tempStr)
+#
+#     def __add__(self, other):
+#         assert isinstance(other, Quaternion)
+#         return Quaternion(self.__s + other.__s, self.__v + other.__v)
+#
+#     def __sub__(self, other):
+#         assert isinstance(other, Quaternion)
+#         return Quaternion(self.__s - other.__s, self.__v - other.__v)
+#
+#     def __mul__(self, other):
+#         assert isinstance(other, Quaternion)
+#         tempS = self.__s * other.__s - self.__v.x * other.__v.x - self.__v.y * other.__v.y - self.__v.z * other.__v.z
+#         tempVx = self.__s * other.__v.x + self.__v.x * other.__s + self.__v.y * other.__v.z - self.__v.z * other.__v.y
+#         tempVy = self.__s * other.__v.y - self.__v.x * other.__v.z + self.__v.y * other.__s + self.__v.z * other.__v.x
+#         tempVz = self.__s * other.__v.z + self.__v.x + other.__v.y - self.__v.y * other.__v.x + self.__v.z * other.__s
+#         return Quaternion(tempS, Point3D(tempVx, tempVy, tempVz))
+#
+#     def conjugateQuaternion(self):
+#         # 共轭四元数
+#         tempS = self.__s
+#         tempVx = -self.__v.x
+#         tempVy = -self.__v.y
+#         tempVz = -self.__v.z
+#         return Quaternion(tempS, Point3D(tempVx, tempVy, tempVz))
+#
+#     def norm(self):
+#         # 模
+#         return (self.__s ** 2 + self.__v.x ** 2 + self.__v.y ** 2 + self.__v.z ** 2) ** 0.5
+#
+#     def inverseQuaternion(self):
+#         # 四元数的逆
+#         tempNorm = self.norm()
+#         tempS = self.__s / tempNorm
+#         tempV = self.__v / tempNorm
+#         return Quaternion(tempS, tempV)
+#
+#     def rotatePrint(self):
+#         # 打印四元数对应的旋转角度与旋转轴
+#         xTheta = 2 * acos(self.__s)
+#         xAxis = self.__v / sin(xTheta / 2)
+#         print('旋转角度为：', xTheta, end=' ')
+#         print('旋转轴为：', xAxis)
+#
+#     @property
+#     def s(self):
+#         return self.__s
+#
+#     @property
+#     def v(self):
+#         return self.__v
+#
+#     @s.setter
+#     def s(self, xS):
+#         self.__s = xS
+#
+#     @v.setter
+#     def v(self, xV):
+#         self.__v = xV
 
-    def __str__(self):
-        tempStr = [self.__s, str(self.__v)]
-        return str(tempStr)
-
-    def __add__(self, other):
-        assert isinstance(other, Quaternion)
-        return Quaternion(self.__s + other.__s, self.__v + other.__v)
-
-    def __sub__(self, other):
-        assert isinstance(other, Quaternion)
-        return Quaternion(self.__s - other.__s, self.__v - other.__v)
-
-    def __mul__(self, other):
-        assert isinstance(other, Quaternion)
-        tempS = self.__s * other.__s - self.__v.x * other.__v.x - self.__v.y * other.__v.y - self.__v.z * other.__v.z
-        tempVx = self.__s * other.__v.x + self.__v.x * other.__s + self.__v.y * other.__v.z - self.__v.z * other.__v.y
-        tempVy = self.__s * other.__v.y - self.__v.x * other.__v.z + self.__v.y * other.__s + self.__v.z * other.__v.x
-        tempVz = self.__s * other.__v.z + self.__v.x + other.__v.y - self.__v.y * other.__v.x + self.__v.z * other.__s
-        return Quaternion(tempS, Point3D(tempVx, tempVy, tempVz))
-
-    def conjugateQuaternion(self):
-        # 共轭四元数
-        tempS = self.__s
-        tempVx = -self.__v.x
-        tempVy = -self.__v.y
-        tempVz = -self.__v.z
-        return Quaternion(tempS, Point3D(tempVx, tempVy, tempVz))
-
-    def norm(self):
-        # 模
-        return (self.__s ** 2 + self.__v.x ** 2 + self.__v.y ** 2 + self.__v.z ** 2) ** 0.5
-
-    def inverseQuaternion(self):
-        # 四元数的逆
-        tempNorm = self.norm()
-        tempS = self.__s / tempNorm
-        tempV = self.__v / tempNorm
-        return Quaternion(tempS, tempV)
-
-    def rotatePrint(self):
-        # 打印四元数对应的旋转角度与旋转轴
-        xTheta = 2 * acos(self.__s)
-        xAxis = self.__v / sin(xTheta / 2)
-        print('旋转角度为：', xTheta, end=' ')
-        print('旋转轴为：', xAxis)
-
-    @property
-    def s(self):
-        return self.__s
-
-    @property
-    def v(self):
-        return self.__v
-
-    @s.setter
-    def s(self, xS):
-        self.__s = xS
-
-    @v.setter
-    def v(self, xV):
-        self.__v = xV
-
-
-def numMul(xNum: (int, float), xQuaternion: Quaternion):
-    # 数乘
-    assert isinstance(xNum, (int, float)) and isinstance(xQuaternion, Quaternion)
-    return Quaternion(xQuaternion.s * xNum, xQuaternion * xNum)
-
-
-def dotMul(xQuaternion: Quaternion, yQuaternion: Quaternion):
-    # 点乘
-    assert isinstance(xQuaternion, Quaternion) and isinstance(yQuaternion, Quaternion)
-    tempS = xQuaternion.s * yQuaternion.s
-    tempVx = xQuaternion.v.x * yQuaternion.v.x
-    tempVy = xQuaternion.v.y * yQuaternion.v.y
-    tempVz = xQuaternion.v.z * yQuaternion.v.z
-    return Quaternion(tempS, Point3D(tempVx, tempVy, tempVz))
-
-
-def Rotate(xPoint, xQuaternion):
-    # 用四元数表示旋转，计算结果为纯虚四元数，虚部的三个分量表示旋转后的3D点坐标
-    assert isinstance(xPoint, Point3D) and isinstance(xQuaternion, Quaternion)
-    xP = Quaternion(0, xPoint)
-    tempQuaternion = xQuaternion * xP * xQuaternion.inverseQuaternion()
-    if tempQuaternion.s == 0:
-        return tempQuaternion.v
+def dotMultiply(xPoint1, xPoint2):
+    if isinstance(xPoint1, Point3D) and isinstance(xPoint2, Point3D):
+        # 三维向量点乘，可用于计算投影或者夹角
+        return xPoint1.x * xPoint2.x + xPoint1.y * xPoint2.y + xPoint1.z * xPoint2.z
     else:
-        print('输入的四元数有误')
         return None
 
 
-def matrixToQuaternion(xMatrix):
-    # 由矩阵到四元数的转换
-    assert isinstance(xMatrix, Matrix3D)
-    tempQ0 = (xMatrix.trace() + 1) ** 0.5 / 2
-    tempQ1 = (xMatrix[1][2] - xMatrix[2][1]) / (4 * tempQ0)
-    tempQ2 = (xMatrix[2][0] - xMatrix[0][2]) / (4 * tempQ0)
-    tempQ3 = (xMatrix[0][1] - xMatrix[1][0]) / (4 * tempQ0)
-    return Quaternion(tempQ0, Point3D(tempQ1, tempQ2, tempQ3))
-
-
-def quaternionToMatrix(xQuaternion):
-    # 由四元数到矩阵的转换
-    assert isinstance(xQuaternion, Quaternion)
-    tempQ0 = xQuaternion.s
-    tempQ1 = xQuaternion.v.x
-    tempQ2 = xQuaternion.v.y
-    tempQ3 = xQuaternion.v.z
-    R00 = 1 - 2 * tempQ2 ** 2 - 2 * tempQ3 ** 2
-    R01 = 2 * tempQ1 * tempQ2 + 2 * tempQ0 * tempQ3
-    R02 = 2 * tempQ1 * tempQ3 - 2 * tempQ0 * tempQ2
-    R10 = 2 * tempQ1 * tempQ2 - 2 * tempQ0 * tempQ3
-    R11 = 1 - 2 * tempQ1 ** 2 - 2 * tempQ3 ** 2
-    R12 = 2 * tempQ2 * tempQ3 + 2 * tempQ0 * tempQ1
-    R20 = 2 * tempQ1 * tempQ3 + 2 * tempQ0 * tempQ2
-    R21 = 2 * tempQ2 * tempQ3 - 2 * tempQ0 * tempQ1
-    R22 = 1 - 2 * tempQ1 ** 2 - 2 * tempQ2 ** 2
-    return Matrix3D([[R00, R01, R02], [R10, R11, R12], [R20, R21, R22]])
+def crossMultiply(xPoint1, xPoint2):
+    if isinstance(xPoint1, Point3D) and isinstance(xPoint2, Point3D):
+        # 三维向量叉乘，求同时垂直于两个向量的向量
+        tempX = xPoint1.y * xPoint2.z - xPoint1.z * xPoint2.y
+        tempY = xPoint1.x * xPoint2.z - xPoint1.z * xPoint2.x
+        tempZ = xPoint1.x * xPoint2.y - xPoint1.y * xPoint2.x
+        return Point3D(tempX, tempY, tempZ)
+    else:
+        return None
 
 
 if __name__ == '__main__':
-    tLine3D = Line3D()
-    print(tLine3D)
-    tPlane = Plane()
-    print(tPlane)
+    pass
